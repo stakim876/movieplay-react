@@ -5,20 +5,21 @@ import { useState } from "react";
 import { AuthProvider } from "@/context/AuthContext.jsx";
 import { MovieProvider } from "@/context/MovieContext.jsx";
 import { FavoritesProvider } from "@/context/FavoritesContext.jsx";
+import { ConfigProvider } from "@/context/ConfigContext.jsx";
 
-import Header from "@/components/Header.jsx";
-import Sidebar from "@/components/Sidebar.jsx";
+import Header from "@/components/layout/Header.jsx";
+import Sidebar from "@/components/layout/Sidebar.jsx";
 
-import HomePage from "@/pages/HomePage.jsx";
-import LoginPage from "@/pages/LoginPage.jsx";
-import SignUpPage from "@/pages/SignUpPage.jsx";
-import ProfilePage from "@/pages/ProfilePage.jsx";
-import FavoritesPage from "@/pages/FavoritesPage.jsx";
-import SearchPage from "@/pages/SearchPage.jsx";
-import MovieDetail from "@/pages/MovieDetail.jsx";
-import CategoryPage from "@/pages/CategoryPage.jsx";
-import DiscoverPage from "@/pages/DiscoverPage.jsx";
-import WhoPage from "@/pages/WhoPage.jsx";
+import HomePage from "@/pages/content/HomePage.jsx";
+import LoginPage from "@/pages/auth/LoginPage.jsx";
+import SignUpPage from "@/pages/auth/SignUpPage.jsx";
+import ProfilePage from "@/pages/user/ProfilePage.jsx";
+import FavoritesPage from "@/pages/user/FavoritesPage.jsx";
+import SearchPage from "@/pages/content/SearchPage.jsx";
+import MovieDetail from "@/pages/content/MovieDetail.jsx";
+import CategoryPage from "@/pages/content/CategoryPage.jsx";
+import DiscoverPage from "@/pages/content/DiscoverPage.jsx";
+import WhoPage from "@/pages/auth/WhoPage.jsx";
 
 import PrivateRoute from "@/routes/PrivateRoute.jsx";
 import AdminRoute from "@/routes/AdminRoute.jsx";
@@ -45,9 +46,10 @@ export default function App() {
       </Helmet>
 
       <AuthProvider>
-        <MovieProvider>
-          <FavoritesProvider>
-            <Routes>
+        <ConfigProvider>
+          <MovieProvider>
+            <FavoritesProvider>
+              <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route
@@ -148,9 +150,10 @@ export default function App() {
                 />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </FavoritesProvider>
-        </MovieProvider>
+              </Routes>
+            </FavoritesProvider>
+          </MovieProvider>
+        </ConfigProvider>
       </AuthProvider>
     </>
   );
