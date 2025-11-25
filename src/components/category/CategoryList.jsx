@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchMovies } from "@/services/tmdb";
+import { fetchMovies } from "@/services/tmdb.js";
 import { useNavigate } from "react-router-dom";
 import "@/styles/components.css";
 

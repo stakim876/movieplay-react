@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchMovies } from "../../api/tmdb";
+import { fetchMovies } from "@/services/tmdb.js";
 import MovieCard from "@/components/category/cards/MovieCard";
 import "../../styles/common.css";
 

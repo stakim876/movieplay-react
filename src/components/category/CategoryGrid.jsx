@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchMovies } from "@/api/tmdb";
+import { fetchMovies } from "@/services/tmdb.js";
 import MovieCard from "@/components/category/cards/MovieCard";
 import "@/styles/components.css";
 

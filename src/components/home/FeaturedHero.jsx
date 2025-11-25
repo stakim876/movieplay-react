@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchMovies, fetchMovieDetail } from "@/api/tmdb";
+import { fetchMovies, fetchMovieDetail } from "@/services/tmdb.js";
 import { FaPowerOff } from "react-icons/fa";
 import "@/styles/components.css";
 
@@ -115,4 +115,3 @@ export default function FeaturedHero() {
     </section>
   );
 }
-

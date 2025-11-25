@@ -1,16 +1,21 @@
+import { getAdultKeywords } from "@/services/adultFilter";
+
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
-const bannedKeywords = [
-  "성인", "에로", "포르노", "야동", "섹스", "19금", "야함", "노출", "불륜", "유혹",
-  "음란", "동침", "은밀한", "위험한 사촌", "두 집 살림", "음욕", "욕망", "불법촬영",
-  "porn", "porno", "xxx", "sex", "sexual", "erotic", "adult", "hardcore",
-  "uncensored", "nude", "nsfw", "sensual", "temptation",
-  "AV女優", "ラブホテル", "ムラムラ", "アダルト", "ポルノ", "セックス", "ヌード", "エロ", "エッチ",
-  "人妻", "変態", "お色気", "裸婦", "欲望", "背徳", "近親", "義母", "叔母", "未亡人", "妄想", "不倫",
-  "ざんげ", "ザンゲ", "色ざんげ", "いろざんげ", "いろ", "色",
-  "色情", "成人", "裸", "性爱", "黄片", "三级片" , "SORO"
-];
+let loadedKeywords = [];
+
+async function loadKeywordFilter() {
+  try {
+    loadedKeywords = await getAdultKeywords();
+    console.log("🔥 Firestore 금칙어 로딩됨:", loadedKeywords.length, "개");
+  } catch (e) {
+    console.error("금칙어 로딩 실패:", e);
+    loadedKeywords = [];
+  }
+}
+
+loadKeywordFilter();
 
 const bannedGenreIds = [867];
 
@@ -33,9 +38,7 @@ function isSafeMovie(m) {
     ${m.overview || ""}
   `.toLowerCase();
 
-  if (/^[\u3040-\u30FF\u4E00-\u9FFF\s]+$/.test(m.title || "")) return false;
-
-  if (bannedKeywords.some((word) => text.includes(word.toLowerCase()))) return false;
+  if (loadedKeywords.some((word) => text.includes(word.toLowerCase()))) return false;
 
   return true;
 }
@@ -85,6 +88,18 @@ export async function fetchMovieDetail(id, type = "movie") {
 
 export async function fetchSearchResults(query, type = "movie") {
   try {
+    if (!loadedKeywords || loadedKeywords.length === 0) {
+      console.warn("⏳ 금칙어 로딩 중 → 검색 차단");
+      return { results: [] };
+    }
+
+    const lowerQuery = query.toLowerCase().trim();
+
+    if (loadedKeywords.some((kw) => lowerQuery.includes(kw.toLowerCase()))) {
+      console.warn("🚫 금칙어 검색 차단됨:", query);
+      return { results: [] };
+    }
+
     const cleanQuery = encodeURIComponent(query.trim());
     if (!cleanQuery) return { results: [] };
 

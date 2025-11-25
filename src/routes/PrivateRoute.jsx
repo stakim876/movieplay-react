@@ -1,18 +1,15 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export default function PrivateRoute({ children }) {
-  const { user, loading } = useAuth(); 
-  const location = useLocation();
+  const auth = useAuth();
+  if (!auth) return null; 
 
-  if (loading) return null;
+  const { user } = auth;
 
-  if (!user) return <Navigate to="/login" replace />;
-
-  const selectedProfile = localStorage.getItem("selectedProfile");
-  if (!selectedProfile && location.pathname !== "/who") {
-    return <Navigate to="/who" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-    return children;
+  return children;
 }
