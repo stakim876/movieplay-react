@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaHome, FaSearch, FaHeart, FaUser } from "react-icons/fa";
-import "@/styles/components.css";
+import "@/styles/components/components.css";
 
 export default function Sidebar({ isOpen, onClose }) {
   return (

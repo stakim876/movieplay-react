@@ -1,31 +1,60 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useConfig } from "@/context/ConfigContext";
-import "@/styles/components.css";
+import { useToast } from "@/context/ToastContext";
+import { FaSearch, FaBell, FaCaretDown, FaBars, FaTimes } from "react-icons/fa";
+import ThemeToggle from "@/components/common/ThemeToggle";
+import "@/styles/components/components.css";
+
 const API_KEY = "7824c1cb6d4b09e0b18631b6bfa38a45";
+
+const PROFILE_KEY = "mp_active_profile_v1";
+const LOGO_SRC = "/assets/logo-mp.svg";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [warning, setWarning] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const auth = useAuth();
+  const { warning: showWarning } = useToast();
   if (!auth) return null;
   const { user, logout } = auth;
 
   const { navigation, genres, loading: configLoading } = useConfig();
 
+  const activeProfile = useMemo(() => {
+    try {
+      const raw = localStorage.getItem(PROFILE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 10);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isActive = (path) => {
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
+
   const handleSearch = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     const trimmed = query.trim();
     if (!trimmed) return;
@@ -40,8 +69,7 @@ export default function Header() {
       const data = await res.json();
 
       if (!data.results || data.results.length === 0) {
-        setWarning(" 금칙어로 인해 검색할 수 없습니다.");
-        setTimeout(() => setWarning(""), 2000);
+        showWarning("금칙어로 인해 검색할 수 없습니다.");
         return;
       }
 
@@ -50,6 +78,12 @@ export default function Header() {
     } catch (error) {
       console.error("검색 오류:", error);
     }
+  };
+
+  const handleSearchClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleSearch(e);
   };
 
   const handleAuth = async () => {
@@ -65,25 +99,75 @@ export default function Header() {
     }
   };
 
+  const handleGoProfiles = () => {
+    navigate("/profiles");
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+    if (!mobileMenuOpen) {
+      setMobileSearchOpen(false);
+    }
+  };
+
+  const toggleMobileSearch = () => {
+    setMobileSearchOpen(!mobileSearchOpen);
+    if (!mobileSearchOpen) {
+      setMobileMenuOpen(false);
+    }
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (mobileMenuOpen && !e.target.closest('.mobile-menu') && !e.target.closest('.mobile-menu-btn')) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [mobileMenuOpen]);
+
   return (
     <header className={`header ${scrolled ? "scrolled" : ""}`}>
       <div className="header-content">
-        <div className="logo" onClick={() => navigate("/home")}>
-          MoviePlay
+        <div className="header-left-mobile">
+          <button 
+            className="mobile-menu-btn"
+            onClick={toggleMobileMenu}
+            aria-label="메뉴"
+          >
+            {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+          <div className="logo mp-logo" onClick={() => navigate("/home")}>
+            <img src={LOGO_SRC} alt="MP" className="mp-header-logo" />
+            <span className="mp-header-word">MoviePlay</span>
+          </div>
         </div>
 
-        <nav className="nav-links">
-          <Link to="/home" className="nav-item">홈</Link>
+        <nav className={`nav-links ${mobileMenuOpen ? "mobile-open" : ""}`}>
+          <Link 
+            to="/home" 
+            className={`nav-item ${isActive("/home") || location.pathname === "/" ? "active" : ""}`}
+          >
+            홈
+          </Link>
 
           <div
             className="dropdown"
-            onMouseEnter={() => setDropdownOpen(true)}
-            onMouseLeave={() => setDropdownOpen(false)}
+            onMouseEnter={() => !window.matchMedia("(max-width: 768px)").matches && setDropdownOpen(true)}
+            onMouseLeave={() => !window.matchMedia("(max-width: 768px)").matches && setDropdownOpen(false)}
+            onClick={() => window.matchMedia("(max-width: 768px)").matches && setDropdownOpen(!dropdownOpen)}
           >
-            <span className="dropdown-toggle">카테고리 ▾</span>
+            <span className={`dropdown-toggle ${dropdownOpen ? "open" : ""}`}>
+              카테고리 <FaCaretDown />
+            </span>
 
             {dropdownOpen && !configLoading && (
-              <div className="dropdown-menu">
+              <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
                 {navigation?.movieCategories?.length > 0 && (
                   <>
                     <span className="dropdown-section"> 영화</span>
@@ -122,26 +206,104 @@ export default function Header() {
             )}
           </div>
 
-          {user && <Link to="/favorites" className="nav-item">내 찜 목록</Link>}
-          {user && <Link to="/profile" className="nav-item">프로필</Link>}
-          {user?.role === "admin" && <Link to="/admin" className="nav-item">관리자</Link>}
+          {user && (
+            <Link 
+              to="/favorites" 
+              className={`nav-item ${isActive("/favorites") ? "active" : ""}`}
+            >
+              내 찜 목록
+            </Link>
+          )}
         </nav>
 
-        <form className="search-bar" onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="검색"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button type="submit">검색</button>
-        </form>
+        <div className="header-right">
+          <button 
+            className="mobile-search-btn"
+            onClick={toggleMobileSearch}
+            aria-label="검색"
+          >
+            <FaSearch />
+          </button>
+          
+          <form 
+            className={`search-bar ${searchFocused ? "focused" : ""} ${mobileSearchOpen ? "mobile-open" : ""}`}
+            onSubmit={handleSearch}
+          >
+            <button
+              type="button"
+              className="search-icon-btn"
+              onClick={handleSearchClick}
+              title="검색"
+            >
+              <FaSearch className="search-icon" />
+            </button>
+            <input
+              type="text"
+              placeholder="제목, 사람, 장르"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => {
+                setSearchFocused(true);
+                setMobileSearchOpen(true);
+              }}
+              onBlur={() => {
+                if (!query) {
+                  setSearchFocused(false);
+                  setTimeout(() => setMobileSearchOpen(false), 200);
+                }
+              }}
+            />
+            {query && (
+              <button 
+                type="button" 
+                className="search-clear"
+                onClick={() => {
+                  setQuery("");
+                  setSearchFocused(false);
+                  setMobileSearchOpen(false);
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </form>
 
-        {warning && <div className="warning-toast">{warning}</div>}
+          <ThemeToggle />
 
-        <button className="auth-btn" onClick={handleAuth}>
-          {user ? "로그아웃" : "로그인"}
-        </button>
+          {user && (
+            <div className="header-profile">
+              {activeProfile && (
+                <button
+                  type="button"
+                  className="profile-pill"
+                  onClick={handleGoProfiles}
+                  title="시청 프로필 변경"
+                >
+                  <span className="profile-avatar">
+                    {activeProfile.avatar ? (
+                      <img src={activeProfile.avatar} alt={activeProfile.name} />
+                    ) : (
+                      <span>{activeProfile.name.charAt(0)}</span>
+                    )}
+                  </span>
+                  <span className="profile-name">{activeProfile.name}</span>
+                </button>
+              )}
+              <button 
+                className="header-icon-btn"
+                onClick={() => navigate("/profile")}
+                title="프로필"
+              >
+                <span className="profile-icon">👤</span>
+              </button>
+            </div>
+          )}
+
+          <button className="auth-btn" onClick={handleAuth}>
+            {user ? "로그아웃" : "로그인"}
+          </button>
+        </div>
+
       </div>
     </header>
   );

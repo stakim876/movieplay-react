@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useConfig } from "@/context/ConfigContext";
-import "@/styles/components.css";
+import "@/styles/components/components.css";
 
 export default function CategoryCards() {
   const navigate = useNavigate();

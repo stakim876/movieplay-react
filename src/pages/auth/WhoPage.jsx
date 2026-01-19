@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useConfig } from "@/context/ConfigContext";
-import "../../styles/common.css";
+import { useToast } from "@/context/ToastContext";
+import "../../styles/common/common.css";
 
 export default function WhoPage() {
   const navigate = useNavigate();
   const { profiles, loading } = useConfig();
+  const { info: showInfo } = useToast();
 
   const handleProfileClick = (profile) => {
     console.log("선택된 프로필:", profile.name);
@@ -41,7 +43,7 @@ export default function WhoPage() {
 
         <div
           className="profile-card add-card"
-          onClick={() => alert("프로필 추가 예정 기능")}
+          onClick={() => showInfo("프로필 추가 기능은 준비 중입니다.")}
           >
           <span className="add-icon">＋</span>
           <p>프로필 추가</p>

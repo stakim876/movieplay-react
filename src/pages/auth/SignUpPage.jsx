@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/services/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import "../../styles/common.css";
+import "../../styles/common/common.css";
 
 export default function SignUpPage() {
   const { signup } = useAuth();

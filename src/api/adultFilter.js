@@ -2,7 +2,7 @@ import { db } from "@/services/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 let loadedKeywords = [];
-let keywordReady = false; 
+let keywordReady = false;
 
 export async function getAdultKeywords() {
   if (loadedKeywords.length > 0) return loadedKeywords;

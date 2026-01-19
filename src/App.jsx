@@ -1,28 +1,45 @@
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
+import { useState, useCallback, Suspense, lazy } from "react";
 
 import { AuthProvider } from "@/context/AuthContext.jsx";
 import { MovieProvider } from "@/context/MovieContext.jsx";
 import { FavoritesProvider } from "@/context/FavoritesContext.jsx";
+import { WatchHistoryProvider } from "@/context/WatchHistoryContext.jsx";
 import { ConfigProvider } from "@/context/ConfigContext.jsx";
+import { ToastProvider } from "@/context/ToastContext.jsx";
+import { ThemeProvider } from "@/context/ThemeContext.jsx";
 
 import Header from "@/components/layout/Header.jsx";
 import Sidebar from "@/components/layout/Sidebar.jsx";
-
-import HomePage from "@/pages/content/HomePage.jsx";
-import LoginPage from "@/pages/auth/LoginPage.jsx";
-import SignUpPage from "@/pages/auth/SignUpPage.jsx";
-import ProfilePage from "@/pages/user/ProfilePage.jsx";
-import FavoritesPage from "@/pages/user/FavoritesPage.jsx";
-import SearchPage from "@/pages/content/SearchPage.jsx";
-import MovieDetail from "@/pages/content/MovieDetail.jsx";
-import CategoryPage from "@/pages/content/CategoryPage.jsx";
-import DiscoverPage from "@/pages/content/DiscoverPage.jsx";
-import WhoPage from "@/pages/auth/WhoPage.jsx";
+import SplashScreen from "@/components/common/SplashScreen.jsx";
+import Toast from "@/components/common/Toast.jsx";
+import ErrorBoundary from "@/components/common/ErrorBoundary.jsx";
+import "@/styles/common/loader.css";
 
 import PrivateRoute from "@/routes/PrivateRoute.jsx";
 import AdminRoute from "@/routes/AdminRoute.jsx";
+
+const HomePage = lazy(() => import("@/pages/content/HomePage.jsx"));
+const LoginPage = lazy(() => import("@/pages/auth/LoginPage.jsx"));
+const SignUpPage = lazy(() => import("@/pages/auth/SignUpPage.jsx"));
+const ProfilePage = lazy(() => import("@/pages/user/ProfilePage.jsx"));
+const FavoritesPage = lazy(() => import("@/pages/user/FavoritesPage.jsx"));
+const SearchPage = lazy(() => import("@/pages/content/SearchPage.jsx"));
+const MovieDetail = lazy(() => import("@/pages/content/MovieDetail.jsx"));
+const CategoryPage = lazy(() => import("@/pages/content/CategoryPage.jsx"));
+const DiscoverPage = lazy(() => import("@/pages/content/DiscoverPage.jsx"));
+const WhoPage = lazy(() => import("@/pages/auth/WhoPage.jsx"));
+const PlayerPage = lazy(() => import("@/pages/player/PlayerPage.jsx"));
+
+const PageLoader = () => (
+  <div className="page-loader">
+    <div className="page-loader-content">
+      <div className="page-loader-spinner"></div>
+      <p className="page-loader-text">로딩 중...</p>
+    </div>
+  </div>
+);
 
 function MainLayout({ sidebarOpen, setSidebarOpen }) {
   return (
@@ -36,7 +53,7 @@ function MainLayout({ sidebarOpen, setSidebarOpen }) {
   );
 }
 
-export default function App() {
+function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -45,116 +62,172 @@ export default function App() {
         <title>MoviePlay | 감성 무비</title>
       </Helmet>
 
-      <AuthProvider>
+      <ToastProvider>
+        <Toast />
         <ConfigProvider>
           <MovieProvider>
             <FavoritesProvider>
-              <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route
-                path="/who"
-                element={
-                  <PrivateRoute>
-                    <WhoPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <ProfilePage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                element={
-                  <MainLayout
-                    sidebarOpen={sidebarOpen}
-                    setSidebarOpen={setSidebarOpen}
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/login" element={<Suspense fallback={<PageLoader />}><LoginPage /></Suspense>} />
+                  <Route path="/signup" element={<Suspense fallback={<PageLoader />}><SignUpPage /></Suspense>} />
+
+                  <Route
+                    path="/who"
+                    element={
+                      <PrivateRoute>
+                        <Suspense fallback={<PageLoader />}>
+                          <WhoPage />
+                        </Suspense>
+                      </PrivateRoute>
+                    }
                   />
-                }
-              >
-                <Route
-                  path="/"
-                  element={
-                    <PrivateRoute>
-                      <HomePage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/search"
-                  element={
-                    <PrivateRoute>
-                      <SearchPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/movie/:id"
-                  element={
-                    <PrivateRoute>
-                      <MovieDetail />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/tv/:id"
-                  element={
-                    <PrivateRoute>
-                      <MovieDetail />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/category/:type/:category"
-                  element={
-                    <PrivateRoute>
-                      <CategoryPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/category/genre/:genreId"
-                  element={
-                    <PrivateRoute>
-                      <CategoryPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/discover"
-                  element={
-                    <PrivateRoute>
-                      <DiscoverPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/favorites"
-                  element={
-                    <PrivateRoute>
-                      <FavoritesPage />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <h1>관리자 페이지</h1>
-                    </AdminRoute>
-                  }
-                />
-              </Route>
-              <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
+
+                  <Route
+                    path="/profile"
+                    element={
+                      <PrivateRoute>
+                        <Suspense fallback={<PageLoader />}>
+                          <ProfilePage />
+                        </Suspense>
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
+                    element={
+                      <MainLayout
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                      />
+                    }
+                  >
+                    <Route
+                      path="/"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <HomePage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/search"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <SearchPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/movie/:id"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <MovieDetail />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/tv/:id"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <MovieDetail />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/category/:type/:category"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <CategoryPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/category/genre/:genreId"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <CategoryPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/discover"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <DiscoverPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/favorites"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <FavoritesPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/admin"
+                      element={
+                        <AdminRoute>
+                          <h1>관리자 페이지</h1>
+                        </AdminRoute>
+                      }
+                    />
+                  </Route>
+
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </Suspense>
             </FavoritesProvider>
           </MovieProvider>
         </ConfigProvider>
-      </AuthProvider>
+      </ToastProvider>
     </>
+  );
+}
+
+export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  const handleSplashComplete = useCallback(() => {
+    setShowSplash(false);
+  }, []);
+
+  return (
+    <ErrorBoundary showDetails={import.meta.env.DEV}>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+      <ThemeProvider>
+        <AuthProvider>
+          <WatchHistoryProvider>
+            <AppContent />
+          </WatchHistoryProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

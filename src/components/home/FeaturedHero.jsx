@@ -1,18 +1,24 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchMovies, fetchMovieDetail } from "@/services/tmdb.js";
-import { FaPowerOff } from "react-icons/fa";
-import "@/styles/components.css";
+import { FaPowerOff, FaPlay, FaInfoCircle } from "react-icons/fa";
+import { HeroSkeleton } from "@/components/common/Skeleton";
+import "@/styles/components/components.css";
 
 export default function FeaturedHero() {
   const [movie, setMovie] = useState(null);
+  const [movieDetail, setMovieDetail] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
   const [visible, setVisible] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
   const iframeRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadFeatured() {
       try {
+        setLoading(true);
         const data = await fetchMovies("/movie/now_playing?language=ko-KR&page=1");
 
         const filtered = (data.results || []).filter(
@@ -26,6 +32,7 @@ export default function FeaturedHero() {
         setMovie(random);
 
         const detail = await fetchMovieDetail(random.id, "movie");
+        setMovieDetail(detail);
 
         const trailer =
           detail.videos?.results.find(
@@ -49,6 +56,8 @@ export default function FeaturedHero() {
         if (trailer) setTrailerKey(trailer.key);
       } catch (err) {
         console.error("FeaturedHero load error:", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadFeatured();
@@ -64,6 +73,10 @@ export default function FeaturedHero() {
     setIsPlaying(!isPlaying);
   };
 
+  if (loading) {
+    return <HeroSkeleton />;
+  }
+
   if (!visible) {
     return (
       <div className="hero-show-btn-wrapper">
@@ -74,8 +87,26 @@ export default function FeaturedHero() {
     );
   }
 
+  const handlePlayClick = () => {
+    if (movie) {
+      navigate(`/movie/${movie.id}`);
+    }
+  };
+
+  const handleInfoClick = () => {
+    if (movie) {
+      navigate(`/movie/${movie.id}`);
+    }
+  };
+
+  const truncateOverview = (text, maxLength = 150) => {
+    if (!text) return "";
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
   return (
-    <section className="featured-hero">
+    <section className="featured-hero fade-in">
       <button
         className="hero-toggle-btn"
         onClick={() => setVisible(false)}
@@ -105,11 +136,48 @@ export default function FeaturedHero() {
             />
           )
         )}
+        <div className="hero-gradient-overlay"></div>
       </div>
 
+      {movie && (
+        <div className="hero-content">
+          <div className="hero-info">
+            <h1 className="hero-title">{movie.title || movie.name}</h1>
+            <div className="hero-meta">
+              {movieDetail?.vote_average && (
+                <span className="hero-rating">
+                  ⭐ {movieDetail.vote_average.toFixed(1)}
+                </span>
+              )}
+              {movieDetail?.release_date && (
+                <span className="hero-year">
+                  {new Date(movieDetail.release_date).getFullYear()}
+                </span>
+              )}
+              {movieDetail?.genres && movieDetail.genres.length > 0 && (
+                <span className="hero-genres">
+                  {movieDetail.genres.slice(0, 2).map((g) => g.name).join(", ")}
+                </span>
+              )}
+            </div>
+            <p className="hero-overview">
+              {truncateOverview(movieDetail?.overview || movie.overview || "")}
+            </p>
+            <div className="hero-buttons">
+              <button className="hero-play-btn" onClick={handlePlayClick}>
+                <FaPlay /> 재생
+              </button>
+              <button className="hero-info-btn" onClick={handleInfoClick}>
+                <FaInfoCircle /> 상세 정보
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {trailerKey && (
-        <button className="play-btn" onClick={togglePlay}>
-          {isPlaying ? "⏸ 멈춤" : "▶ 재생"}
+        <button className="hero-video-toggle" onClick={togglePlay}>
+          {isPlaying ? "⏸" : "▶"}
         </button>
       )}
     </section>
