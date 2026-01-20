@@ -1,48 +1,38 @@
-import { useState } from "react";
-import { FaPlay, FaChevronDown, FaChevronUp, FaClock } from "react-icons/fa";
+import { useState, useEffect } from "react";
 import { fetchTVSeason } from "@/services/tmdb";
-import { useWatchHistory } from "@/context/WatchHistoryContext";
+import { FaChevronDown, FaChevronUp, FaPlay } from "react-icons/fa";
 import "@/styles/components/tv.css";
 
 export default function SeasonList({ tvId, seasons, onEpisodeSelect }) {
-  const [expandedSeasons, setExpandedSeasons] = useState(new Set());
-  const [seasonEpisodes, setSeasonEpisodes] = useState({});
-  const [loadingSeasons, setLoadingSeasons] = useState(new Set());
-  const { getWatchProgress } = useWatchHistory();
+  const [expandedSeason, setExpandedSeason] = useState(null);
+  const [seasonData, setSeasonData] = useState({});
+  const [loading, setLoading] = useState({});
 
-  const toggleSeason = async (seasonNumber) => {
-    const newExpanded = new Set(expandedSeasons);
-    
-    if (newExpanded.has(seasonNumber)) {
-      newExpanded.delete(seasonNumber);
-    } else {
-      newExpanded.add(seasonNumber);
-      
-      if (!seasonEpisodes[seasonNumber]) {
-        setLoadingSeasons(prev => new Set(prev).add(seasonNumber));
-        try {
-          const seasonData = await fetchTVSeason(tvId, seasonNumber);
-          setSeasonEpisodes(prev => ({
-            ...prev,
-            [seasonNumber]: seasonData.episodes || []
-          }));
-        } catch (err) {
-          console.error("시즌 정보 불러오기 실패:", err);
-          setSeasonEpisodes(prev => ({
-            ...prev,
-            [seasonNumber]: []
-          }));
-        } finally {
-          setLoadingSeasons(prev => {
-            const next = new Set(prev);
-            next.delete(seasonNumber);
-            return next;
-          });
-        }
-      }
+  const handleSeasonClick = async (seasonNumber) => {
+    if (expandedSeason === seasonNumber) {
+      setExpandedSeason(null);
+      return;
     }
-    
-    setExpandedSeasons(newExpanded);
+
+    setExpandedSeason(seasonNumber);
+
+    // 이미 로드된 시즌 데이터가 있으면 다시 로드하지 않음
+    if (seasonData[seasonNumber]) {
+      return;
+    }
+
+    setLoading((prev) => ({ ...prev, [seasonNumber]: true }));
+    try {
+      const data = await fetchTVSeason(tvId, seasonNumber);
+      setSeasonData((prev) => ({
+        ...prev,
+        [seasonNumber]: data.episodes || [],
+      }));
+    } catch (error) {
+      console.error(`시즌 ${seasonNumber} 로드 실패:`, error);
+    } finally {
+      setLoading((prev) => ({ ...prev, [seasonNumber]: false }));
+    }
   };
 
   const handleEpisodeClick = (episode) => {
@@ -51,74 +41,53 @@ export default function SeasonList({ tvId, seasons, onEpisodeSelect }) {
     }
   };
 
-  const formatRuntime = (minutes) => {
-    if (!minutes) return "";
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}시간 ${mins}분`;
-    }
-    return `${mins}분`;
-  };
+  if (!seasons || seasons.length === 0) {
+    return null;
+  }
 
   return (
     <div className="seasons-container">
       <h2 className="seasons-title">시즌 및 에피소드</h2>
       <div className="seasons-list">
         {seasons.map((season) => {
-          const isExpanded = expandedSeasons.has(season.season_number);
-          const episodes = seasonEpisodes[season.season_number] || [];
-          const isLoading = loadingSeasons.has(season.season_number);
+          const isExpanded = expandedSeason === season.season_number;
+          const episodes = seasonData[season.season_number] || [];
+          const isLoading = loading[season.season_number];
 
           return (
-            <div key={season.id} className="season-item">
-              <div
+            <div key={season.season_number} className="season-item">
+              <button
                 className="season-header"
-                onClick={() => toggleSeason(season.season_number)}
+                onClick={() => handleSeasonClick(season.season_number)}
+                aria-expanded={isExpanded}
               >
                 <div className="season-info">
                   <h3 className="season-name">
                     {season.name || `시즌 ${season.season_number}`}
                   </h3>
-                  <div className="season-meta">
-                    <span className="season-episode-count">
-                      {season.episode_count}개 에피소드
-                    </span>
-                    {season.air_date && (
-                      <span className="season-year">
-                        {new Date(season.air_date).getFullYear()}
-                      </span>
-                    )}
-                  </div>
+                  <span className="season-episode-count">
+                    {season.episode_count}개 에피소드
+                  </span>
                 </div>
                 <div className="season-toggle">
                   {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
-              </div>
+              </button>
 
               {isExpanded && (
                 <div className="episodes-list">
                   {isLoading ? (
                     <div className="episodes-loading">로딩 중...</div>
                   ) : episodes.length > 0 ? (
-                    episodes.map((episode) => {
-                      const episodeProgress = getWatchProgress(
-                        tvId,
-                        "tv",
-                        season.season_number,
-                        episode.episode_number
-                      );
-                      const progressPercent = episodeProgress?.progressPercent || 0;
-                      const isCompleted = progressPercent >= 90;
-
-                      return (
+                    <>
+                      {episodes.map((episode) => (
                         <div
                           key={episode.id}
-                          className={`episode-item ${isCompleted ? "completed" : ""}`}
+                          className="episode-item"
                           onClick={() => handleEpisodeClick(episode)}
                         >
-                          <div className={`episode-number ${isCompleted ? "completed" : ""}`}>
-                            {isCompleted ? "✓" : episode.episode_number}
+                          <div className="episode-number">
+                            {episode.episode_number}
                           </div>
                           <div className="episode-content">
                             <div className="episode-header">
@@ -127,7 +96,7 @@ export default function SeasonList({ tvId, seasons, onEpisodeSelect }) {
                               </h4>
                               {episode.runtime && (
                                 <span className="episode-runtime">
-                                  <FaClock /> {formatRuntime(episode.runtime)}
+                                  {episode.runtime}분
                                 </span>
                               )}
                             </div>
@@ -140,31 +109,23 @@ export default function SeasonList({ tvId, seasons, onEpisodeSelect }) {
                             )}
                             {episode.air_date && (
                               <span className="episode-air-date">
-                                {new Date(episode.air_date).toLocaleDateString("ko-KR")}
+                                방영일: {new Date(episode.air_date).toLocaleDateString("ko-KR")}
                               </span>
                             )}
-                            {progressPercent > 0 && (
-                              <div className="episode-progress">
-                                <div className="episode-progress-bar-container">
-                                  <div
-                                    className="episode-progress-bar"
-                                    style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                                  ></div>
-                                </div>
-                                <span className="episode-progress-text">
-                                  {isCompleted
-                                    ? "완료"
-                                    : `${Math.round(progressPercent)}% 시청함`}
-                                </span>
-                              </div>
-                            )}
                           </div>
-                          <div className="episode-play">
+                          <button
+                            className="episode-play"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEpisodeClick(episode);
+                            }}
+                            aria-label={`에피소드 ${episode.episode_number} 재생`}
+                          >
                             <FaPlay />
-                          </div>
+                          </button>
                         </div>
-                      );
-                    })
+                      ))}
+                    </>
                   ) : (
                     <div className="episodes-empty">에피소드 정보가 없습니다.</div>
                   )}

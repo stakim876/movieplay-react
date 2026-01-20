@@ -9,6 +9,7 @@ import { WatchHistoryProvider } from "@/context/WatchHistoryContext.jsx";
 import { ConfigProvider } from "@/context/ConfigContext.jsx";
 import { ToastProvider } from "@/context/ToastContext.jsx";
 import { ThemeProvider } from "@/context/ThemeContext.jsx";
+import { SubscriptionProvider } from "@/context/SubscriptionContext.jsx";
 
 import Header from "@/components/layout/Header.jsx";
 import Sidebar from "@/components/layout/Sidebar.jsx";
@@ -31,6 +32,9 @@ const CategoryPage = lazy(() => import("@/pages/content/CategoryPage.jsx"));
 const DiscoverPage = lazy(() => import("@/pages/content/DiscoverPage.jsx"));
 const WhoPage = lazy(() => import("@/pages/auth/WhoPage.jsx"));
 const PlayerPage = lazy(() => import("@/pages/player/PlayerPage.jsx"));
+const SubscriptionPage = lazy(() => import("@/pages/subscription/SubscriptionPage.jsx"));
+const PaymentSuccessPage = lazy(() => import("@/pages/subscription/PaymentSuccessPage.jsx"));
+const PaymentFailPage = lazy(() => import("@/pages/subscription/PaymentFailPage.jsx"));
 
 const PageLoader = () => (
   <div className="page-loader">
@@ -65,8 +69,9 @@ function AppContent() {
       <ToastProvider>
         <Toast />
         <ConfigProvider>
-          <MovieProvider>
-            <FavoritesProvider>
+          <SubscriptionProvider>
+            <MovieProvider>
+              <FavoritesProvider>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/login" element={<Suspense fallback={<PageLoader />}><LoginPage /></Suspense>} />
@@ -191,6 +196,39 @@ function AppContent() {
                     />
 
                     <Route
+                      path="/subscription"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <SubscriptionPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/subscription/payment/success"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <PaymentSuccessPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/subscription/payment/fail"
+                      element={
+                        <PrivateRoute>
+                          <Suspense fallback={<PageLoader />}>
+                            <PaymentFailPage />
+                          </Suspense>
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route
                       path="/admin"
                       element={
                         <AdminRoute>
@@ -205,6 +243,7 @@ function AppContent() {
               </Suspense>
             </FavoritesProvider>
           </MovieProvider>
+        </SubscriptionProvider>
         </ConfigProvider>
       </ToastProvider>
     </>

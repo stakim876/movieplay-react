@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tosspayments/payment-widget-sdk": "^0.12.1",
     "firebase": "^10.14.1",
     "hls.js": "^1.6.11",
     "query-string": "^9.2.2",

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaSearch, FaHeart, FaUser } from "react-icons/fa";
+import { FaHome, FaSearch, FaHeart, FaUser, FaCreditCard } from "react-icons/fa";
 import "@/styles/components/components.css";
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -14,6 +14,9 @@ export default function Sidebar({ isOpen, onClose }) {
         </Link>
         <Link to="/favorites" className="sidebar-item" onClick={onClose}>
           <FaHeart /> <span>즐겨찾기</span>
+        </Link>
+        <Link to="/subscription" className="sidebar-item" onClick={onClose}>
+          <FaCreditCard /> <span>구독</span>
         </Link>
         <Link to="/profile" className="sidebar-item" onClick={onClose}>
           <FaUser /> <span>프로필</span>

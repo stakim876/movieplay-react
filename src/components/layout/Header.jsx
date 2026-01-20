@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
-import { FaSearch, FaBell, FaCaretDown, FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaBell, FaCaretDown, FaBars, FaTimes, FaCreditCard } from "react-icons/fa";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import "@/styles/components/components.css";
 
@@ -212,6 +212,15 @@ export default function Header() {
               className={`nav-item ${isActive("/favorites") ? "active" : ""}`}
             >
               내 찜 목록
+            </Link>
+          )}
+          
+          {user && (
+            <Link 
+              to="/subscription" 
+              className={`nav-item ${isActive("/subscription") ? "active" : ""}`}
+            >
+              구독
             </Link>
           )}
         </nav>

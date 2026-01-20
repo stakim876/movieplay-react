@@ -1,11 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { FaExclamationTriangle, FaRedo, FaHome } from "react-icons/fa";
-import { useToast } from "@/context/ToastContext";
 import "@/styles/components/error.css";
 
 export default function ErrorFallback({ error, resetErrorBoundary, showDetails = false }) {
   const navigate = useNavigate();
-  const { error: showError } = useToast();
 
   const handleRetry = () => {
     if (resetErrorBoundary) {
