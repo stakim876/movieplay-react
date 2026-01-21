@@ -23,7 +23,8 @@ function saveWatchHistory(history) {
 }
 
 export function WatchHistoryProvider({ children }) {
-  const { user } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user || null;
   const [watchHistory, setWatchHistory] = useState(() => loadWatchHistory());
 
   useEffect(() => {

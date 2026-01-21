@@ -4,6 +4,11 @@ import { apiCache } from "@/utils/cache";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
+// API 키 검증
+if (!API_KEY || API_KEY === "your_tmdb_api_key_here") {
+  console.warn("⚠️ TMDB API 키가 설정되지 않았습니다. .env 파일에 VITE_TMDB_API_KEY를 설정해주세요.");
+}
+
 let loadedKeywords = [];
 let keywordsLoading = true;
 
