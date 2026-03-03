@@ -350,6 +350,77 @@
   line-height: 1.6;
 }
 
+/* 결제 내역 */
+.subscription-payment-history {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-history-title {
+  font-size: 1.25rem;
+  color: #333;
+  margin: 0 0 1rem;
+}
+
+.payment-history-loading,
+.payment-history-empty {
+  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.payment-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.payment-history-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.payment-history-item:last-child {
+  border-bottom: none;
+}
+
+.payment-history-date {
+  color: #555;
+  min-width: 6rem;
+}
+
+.payment-history-plan {
+  text-transform: capitalize;
+  font-weight: 500;
+  color: #333;
+}
+
+.payment-history-amount {
+  margin-left: auto;
+  font-weight: 600;
+  color: #333;
+}
+
+.payment-history-receipt {
+  font-size: 0.85rem;
+  color: #667eea;
+  text-decoration: none;
+}
+
+.payment-history-receipt:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .subscription-page {
     padding: 2rem 1rem;

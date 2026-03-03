@@ -1,3 +1,17 @@
+export const TMDB_GENRE_MAP = {
+  28: "액션", 12: "모험", 16: "애니메이션", 35: "코미디", 80: "범죄",
+  99: "다큐멘터리", 18: "드라마", 10751: "가족", 14: "판타지", 36: "역사",
+  27: "공포", 10402: "음악", 9648: "미스터리", 10749: "로맨스", 878: "SF",
+  10770: "TV영화", 53: "스릴러", 10752: "전쟁", 37: "서부",
+};
+
+export const GENRE_NAME_TO_ID = {
+  "액션": 28, "모험": 12, "애니메이션": 16, "코미디": 35, "범죄": 80,
+  "다큐멘터리": 99, "드라마": 18, "가족": 10751, "판타지": 14, "역사": 36,
+  "공포": 27, "음악": 10402, "미스터리": 9648, "로맨스": 10749, "SF": 878,
+  "TV영화": 10770, "스릴러": 53, "전쟁": 10752, "서부": 37,
+};
+
 export function analyzeUserPreferences(watchHistory, favorites, comments) {
   const preferences = {
     genres: {},
@@ -63,13 +77,7 @@ export function calculateMovieScore(movie, preferences) {
 
   if (movie.genre_ids && Array.isArray(movie.genre_ids)) {
     const genreMatches = movie.genre_ids.filter((genreId) => {
-      const genreMap = {
-        28: "액션", 12: "모험", 16: "애니메이션", 35: "코미디", 80: "범죄",
-        99: "다큐멘터리", 18: "드라마", 10751: "가족", 14: "판타지", 36: "역사",
-        27: "공포", 10402: "음악", 9648: "미스터리", 10749: "로맨스", 878: "SF",
-        10770: "TV영화", 53: "스릴러", 10752: "전쟁", 37: "서부"
-      };
-      const genreName = genreMap[genreId];
+      const genreName = TMDB_GENRE_MAP[genreId];
       return genreName && preferences.genres[genreName];
     });
     
@@ -166,15 +174,8 @@ export function getGenreBasedRecommendations(allMovies, preferences, genreLimit 
     .slice(0, 3)
     .map(([genreName]) => genreName);
 
-  const genreMap = {
-    "액션": 28, "모험": 12, "애니메이션": 16, "코미디": 35, "범죄": 80,
-    "다큐멘터리": 99, "드라마": 18, "가족": 10751, "판타지": 14, "역사": 36,
-    "공포": 27, "음악": 10402, "미스터리": 9648, "로맨스": 10749, "SF": 878,
-    "TV영화": 10770, "스릴러": 53, "전쟁": 10752, "서부": 37
-  };
-
   const genreIds = sortedGenres
-    .map((name) => genreMap[name])
+    .map((name) => GENRE_NAME_TO_ID[name])
     .filter((id) => id !== undefined);
 
   if (genreIds.length === 0) {

@@ -1,10 +1,7 @@
-import { doc, setDoc, updateDoc, collection, addDoc, Timestamp, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, updateDoc, collection, addDoc, getDocs, query, orderBy, limit, Timestamp, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import { getPlanById } from "@/constants/subscriptionPlans";
 
-/**
- * 구독 생성 (무료 체험 시작)
- */
 export async function createSubscription(userId, planId, isYearly = false) {
   try {
     const plan = getPlanById(planId, isYearly);
@@ -12,11 +9,9 @@ export async function createSubscription(userId, planId, isYearly = false) {
       throw new Error('유효하지 않은 플랜입니다.');
     }
 
-    // 무료 체험 종료일 계산 (14일 후)
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + 14);
 
-    // 구독 종료일 계산
     const endDate = new Date();
     if (isYearly) {
       endDate.setFullYear(endDate.getFullYear() + 1);
@@ -26,7 +21,7 @@ export async function createSubscription(userId, planId, isYearly = false) {
 
     const subscriptionData = {
       planId: plan.id,
-      status: 'trial', // 무료 체험 시작
+      status: 'trial',
       startDate: serverTimestamp(),
       endDate: Timestamp.fromDate(endDate),
       trialEndDate: Timestamp.fromDate(trialEndDate),
@@ -38,13 +33,11 @@ export async function createSubscription(userId, planId, isYearly = false) {
       updatedAt: serverTimestamp(),
     };
 
-    // 구독 정보 저장
     await setDoc(
       doc(db, "users", userId, "subscription", "current"),
       subscriptionData
     );
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -62,9 +55,6 @@ export async function createSubscription(userId, planId, isYearly = false) {
   }
 }
 
-/**
- * 구독 활성화 (결제 완료 후)
- */
 export async function activateSubscription(userId, paymentData) {
   try {
     const subscriptionRef = doc(db, "users", userId, "subscription", "current");
@@ -79,7 +69,6 @@ export async function activateSubscription(userId, paymentData) {
       updatedAt: serverTimestamp(),
     });
 
-    // 결제 내역 저장
     await addDoc(
       collection(db, "users", userId, "payments"),
       {
@@ -99,7 +88,6 @@ export async function activateSubscription(userId, paymentData) {
       }
     );
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -115,9 +103,6 @@ export async function activateSubscription(userId, paymentData) {
   }
 }
 
-/**
- * 구독 취소
- */
 export async function cancelSubscription(userId, cancelAtPeriodEnd = true) {
   try {
     const subscriptionRef = doc(db, "users", userId, "subscription", "current");
@@ -129,7 +114,6 @@ export async function cancelSubscription(userId, cancelAtPeriodEnd = true) {
       updatedAt: serverTimestamp(),
     });
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -143,9 +127,6 @@ export async function cancelSubscription(userId, cancelAtPeriodEnd = true) {
   }
 }
 
-/**
- * 구독 재개
- */
 export async function resumeSubscription(userId) {
   try {
     const subscriptionRef = doc(db, "users", userId, "subscription", "current");
@@ -157,7 +138,6 @@ export async function resumeSubscription(userId) {
       updatedAt: serverTimestamp(),
     });
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -171,9 +151,6 @@ export async function resumeSubscription(userId) {
   }
 }
 
-/**
- * 구독 플랜 변경
- */
 export async function updateSubscriptionPlan(userId, newPlanId, isYearly = false) {
   try {
     const newPlan = getPlanById(newPlanId, isYearly);
@@ -191,7 +168,6 @@ export async function updateSubscriptionPlan(userId, newPlanId, isYearly = false
     const currentData = subscriptionDoc.data();
     const oldPlanId = currentData.planId;
 
-    // 구독 종료일 계산
     const endDate = new Date();
     if (isYearly) {
       endDate.setFullYear(endDate.getFullYear() + 1);
@@ -207,7 +183,6 @@ export async function updateSubscriptionPlan(userId, newPlanId, isYearly = false
       updatedAt: serverTimestamp(),
     });
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -223,9 +198,6 @@ export async function updateSubscriptionPlan(userId, newPlanId, isYearly = false
   }
 }
 
-/**
- * 결제 실패 처리
- */
 export async function handlePaymentFailure(userId) {
   try {
     const subscriptionRef = doc(db, "users", userId, "subscription", "current");
@@ -235,7 +207,6 @@ export async function handlePaymentFailure(userId) {
       updatedAt: serverTimestamp(),
     });
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -249,9 +220,6 @@ export async function handlePaymentFailure(userId) {
   }
 }
 
-/**
- * 구독 갱신
- */
 export async function renewSubscription(userId, paymentData) {
   try {
     const subscriptionRef = doc(db, "users", userId, "subscription", "current");
@@ -263,8 +231,7 @@ export async function renewSubscription(userId, paymentData) {
 
     const currentData = subscriptionDoc.data();
     const plan = getPlanById(currentData.planId, currentData.isYearly);
-    
-    // 구독 종료일 연장
+
     const endDate = new Date();
     if (currentData.isYearly) {
       endDate.setFullYear(endDate.getFullYear() + 1);
@@ -279,7 +246,6 @@ export async function renewSubscription(userId, paymentData) {
       updatedAt: serverTimestamp(),
     });
 
-    // 결제 내역 저장
     await addDoc(
       collection(db, "users", userId, "payments"),
       {
@@ -297,7 +263,6 @@ export async function renewSubscription(userId, paymentData) {
       }
     );
 
-    // 구독 이력 저장
     await addDoc(
       collection(db, "users", userId, "subscriptionHistory"),
       {
@@ -310,5 +275,48 @@ export async function renewSubscription(userId, paymentData) {
   } catch (error) {
     console.error('구독 갱신 실패:', error);
     throw error;
+  }
+}
+
+export async function getPaymentHistory(userId, maxCount = 30) {
+  if (!userId) return [];
+
+  try {
+    const paymentsRef = collection(db, "users", userId, "payments");
+    const q = query(
+      paymentsRef,
+      orderBy("paymentDate", "desc"),
+      limit(maxCount)
+    );
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        amount: data.amount ?? 0,
+        currency: data.currency ?? "KRW",
+        status: data.status ?? "",
+        planId: data.planId ?? "",
+        paymentDate: data.paymentDate?.toDate?.() ?? data.paymentDate,
+        transactionId: data.transactionId ?? "",
+        receiptUrl: data.receiptUrl ?? "",
+        billingPeriod: data.billingPeriod,
+      };
+    });
+  } catch (error) {
+    const isPermissionDenied =
+      error?.code === "permission-denied" ||
+      (error?.message && String(error.message).includes("permissions"));
+    if (isPermissionDenied) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          "결제 내역: Firestore 규칙에서 users/{userId}/payments 읽기 권한을 허용해주세요. (firestore.rules 참고)"
+        );
+      }
+    } else {
+      console.error("결제 내역 조회 실패:", error);
+    }
+    return [];
   }
 }

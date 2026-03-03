@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,7 +13,6 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// 환경 변수 검증
 const hasValidConfig = firebaseConfig.apiKey && 
   firebaseConfig.apiKey !== "your_firebase_api_key_here" &&
   firebaseConfig.projectId && 
@@ -34,21 +34,23 @@ if (!hasValidConfig) {
 let app;
 let auth;
 let db;
+let storage;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  
+  storage = getStorage(app);
+
   if (hasValidConfig) {
     console.log("🔥 Firebase 연결 성공 - projectId:", firebaseConfig.projectId);
   }
 } catch (error) {
   console.error("❌ Firebase 초기화 실패:", error);
   console.error("💡 .env 파일의 Firebase 설정을 확인하고 개발 서버를 재시작해주세요.");
-  // 앱이 완전히 크래시되지 않도록 더미 객체 반환
   auth = null;
   db = null;
+  storage = null;
 }
 
-export { auth, db };
+export { auth, db, storage };

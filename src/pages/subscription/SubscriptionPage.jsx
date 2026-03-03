@@ -1,63 +1,80 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { getPlanById, getAllPlans } from "@/constants/subscriptionPlans";
+import { getPaymentHistory } from "@/services/subscription";
+import PaymentModal from "@/components/subscription/PaymentModal";
 import "./SubscriptionPage.css";
 
 export default function SubscriptionPage() {
-  const [billing, setBilling] = useState("monthly"); 
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { subscription } = useSubscription();
+  const [billing, setBilling] = useState("monthly");
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState(null);
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
+  const isYearly = billing === "yearly";
   const plans = useMemo(() => {
-    const base = [
-      {
-        key: "basic",
-        name: "베이직",
-        monthlyPrice: 9900,
-        desc: "모바일/태블릿 중심",
-        features: ["최대 1개 프로필", "720p 화질", "광고 포함", "다운로드 불가", "동시 시청 1대"],
-      },
-      {
-        key: "standard",
-        name: "스탠다드",
-        monthlyPrice: 14900,
-        badge: "인기",
-        desc: "대부분 사용자에게 추천",
-        features: ["최대 2개 프로필", "1080p 화질", "광고 없음", "2대 다운로드", "동시 시청 2대"],
-      },
-      {
-        key: "premium",
-        name: "프리미엄",
-        monthlyPrice: 19900,
-        desc: "가족/고화질/다중 기기",
-        features: ["최대 4개 프로필", "4K+HDR 화질", "광고 없음", "6대 다운로드", "동시 시청 4대"],
-      },
-    ];
-
-    const YEARLY_DISCOUNT = 0.15;
-
-    return base.map((p) => {
-      if (billing === "monthly") {
-        return {
-          ...p,
-          priceText: `${p.monthlyPrice.toLocaleString()}원`,
-          periodText: "/월",
-          savingsText: null,
-        };
-      }
-
-      const yearlyTotal = Math.round(p.monthlyPrice * 12 * (1 - YEARLY_DISCOUNT));
-      const monthlyEquivalent = Math.round(yearlyTotal / 12);
-
+    const all = getAllPlans(isYearly);
+    const badge = { standard: "인기" };
+    return all.map((plan) => {
+      const f = plan.features || {};
+      const features = [
+        `최대 ${f.profiles ?? 0}개 프로필`,
+        `${f.maxQuality ?? "-"} 화질`,
+        f.ads ? "광고 포함" : "광고 없음",
+        (f.downloads ?? 0) > 0 ? `${f.downloads}대 다운로드` : "다운로드 불가",
+        `동시 시청 ${f.simultaneousStreams ?? 1}대`,
+      ];
       return {
-        ...p,
-        priceText: `${monthlyEquivalent.toLocaleString()}원`,
-        periodText: "/월 (연간 결제)",
-        savingsText: `연간 총 ${yearlyTotal.toLocaleString()}원 · 약 ${Math.round(
-          YEARLY_DISCOUNT * 100
-        )}% 절약`,
+        key: plan.id,
+        name: plan.name,
+        priceText: `${plan.price.toLocaleString()}원`,
+        periodText: isYearly ? "/월 (연간 결제)" : "/월",
+        savingsText: plan.savings != null ? `연간 약 ${(plan.savings / 10000).toFixed(0)}만원 절약` : null,
+        features,
+        badge: badge[plan.id] || null,
+        desc: plan.description,
       };
     });
   }, [billing]);
 
+  useEffect(() => {
+    if (!user?.uid) {
+      setPaymentHistory([]);
+      return;
+    }
+    let cancelled = false;
+    setHistoryLoading(true);
+    getPaymentHistory(user.uid, 20)
+      .then((list) => {
+        if (!cancelled) setPaymentHistory(list);
+      })
+      .catch(() => {
+        if (!cancelled) setPaymentHistory([]);
+      })
+      .finally(() => {
+        if (!cancelled) setHistoryLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [user?.uid]);
+
   const onSelectPlan = (planKey) => {
-    alert(`${planKey} 플랜 선택 (${billing === "monthly" ? "월간" : "연간"})`);
+    if (!user) {
+      navigate("/login", { state: { from: "/subscription" } });
+      return;
+    }
+    setSelectedPlanId(planKey);
+    setPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setPaymentModalOpen(false);
+    setSelectedPlanId(null);
   };
 
   return (
@@ -106,7 +123,7 @@ export default function SubscriptionPage() {
 
                 {p.savingsText && <div className="plan-savings">{p.savingsText}</div>}
 
-                <div className="plan-description">{p.desc}</div>
+                {p.desc && <div className="plan-description">{p.desc}</div>}
 
                 <ul className="plan-features">
                   {p.features.map((f) => (
@@ -169,6 +186,61 @@ export default function SubscriptionPage() {
             <p>일반적으로 모바일 앱 환경에서 제공하는 방식이 많습니다. 프로젝트 방향에 맞게 지원 범위를 정하면 됩니다.</p>
           </div>
         </section>
+
+        {user && (
+          <section className="subscription-payment-history" aria-label="결제 내역">
+            <h2 className="payment-history-title">결제 내역</h2>
+            {historyLoading ? (
+              <p className="payment-history-loading">불러오는 중...</p>
+            ) : paymentHistory.length === 0 ? (
+              <p className="payment-history-empty">결제 내역이 없습니다.</p>
+            ) : (
+              <ul className="payment-history-list">
+                {paymentHistory.map((item) => (
+                  <li key={item.id} className="payment-history-item">
+                    <span className="payment-history-date">
+                      {item.paymentDate
+                        ? new Date(item.paymentDate).toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : "-"}
+                    </span>
+                    <span className="payment-history-plan">{item.planId || "구독"}</span>
+                    <span className="payment-history-amount">
+                      {item.amount?.toLocaleString()}원
+                    </span>
+                    {item.receiptUrl && (
+                      <a
+                        href={item.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="payment-history-receipt"
+                      >
+                        영수증
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
+        <PaymentModal
+          isOpen={paymentModalOpen}
+          onClose={() => {
+            setPaymentModalOpen(false);
+            setSelectedPlanId(null);
+          }}
+          planId={selectedPlanId}
+          isYearly={isYearly}
+          userId={user?.uid}
+          userEmail={user?.email ?? ""}
+          userName={user?.displayName ?? ""}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
       </div>
     </main>
   );
