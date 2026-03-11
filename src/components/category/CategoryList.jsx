@@ -4,10 +4,13 @@ import { useNavigate } from "react-router-dom";
 import "@/styles/components/components.css";
 
 export default function CategoryList({ title, genreId }) {
+  // 영화 데이터 상태 저장 (장르별 최대 8개)
   const [movies, setMovies] = useState([]);
+  // 호버된 카드 인덱스 상태 저장
   const [hovered, setHovered] = useState(null);
   const navigate = useNavigate();
 
+  // genreId 변경 시 영화 데이터 가져오기
   useEffect(() => {
     async function loadMovies() {
       try {

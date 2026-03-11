@@ -6,9 +6,13 @@ import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
 import "@/styles/components/components.css";
 
 export default function CategoryGrid({ title, category, type, genreId }) {
+  // 영화 데이터 상태 저장
   const [movies, setMovies] = useState([]);
+  // 로딩 상태 저장
   const [loading, setLoading] = useState(true);
+  // 현재 페이지 번호 상태 저장
   const [page, setPage] = useState(1);
+  // 더 불러올 데이터 존재 여부 상태 저장
   const [hasMore, setHasMore] = useState(true);
   const rowRef = useRef(null);
   
@@ -58,12 +62,14 @@ export default function CategoryGrid({ title, category, type, genreId }) {
     );
   }
 
+  // 카테고리/장르 변경 시 페이지·목록 초기화
   useEffect(() => {
     setPage(1);
     setMovies([]);
     setHasMore(true);
   }, [category, type, genreId]);
 
+  // 페이지/카테고리 변경 시 영화 데이터 가져오기
   useEffect(() => {
     async function loadMovies() {
       if (!hasMore && page > 1) return;
@@ -102,6 +108,7 @@ export default function CategoryGrid({ title, category, type, genreId }) {
     loadMovies();
   }, [page, category, type, genreId, hasMore]);
 
+  // 가로 스크롤 끝 도달 시 다음 페이지 로드 (setPage 증가 → 위 useEffect에서 fetchMovies)
   useEffect(() => {
     const scrollWrapper = rowRef.current?.closest(".scroll-wrapper");
     if (!scrollWrapper || !hasMore) return;

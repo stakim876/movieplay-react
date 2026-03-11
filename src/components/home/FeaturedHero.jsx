@@ -6,15 +6,22 @@ import { HeroSkeleton } from "@/components/common/Skeleton";
 import "@/styles/components/components.css";
 
 export default function FeaturedHero() {
+  // 영화 데이터 상태 저장 (히어로용 1편)
   const [movie, setMovie] = useState(null);
+  // 영화 상세 정보 상태 저장
   const [movieDetail, setMovieDetail] = useState(null);
+  // 트레일러 키 상태 저장
   const [trailerKey, setTrailerKey] = useState(null);
+  // 히어로 표시 여부 상태 저장
   const [visible, setVisible] = useState(true);
+  // 재생 중 여부 상태 저장
   const [isPlaying, setIsPlaying] = useState(false);
+  // 로딩 상태 저장
   const [loading, setLoading] = useState(true);
   const iframeRef = useRef(null);
   const navigate = useNavigate();
 
+  // 페이지 로드 시 영화 데이터 가져오기 (현재 상영작 중 랜덤 1편)
   useEffect(() => {
     async function loadFeatured() {
       try {

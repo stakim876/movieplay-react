@@ -49,10 +49,13 @@ function saveDislikedIds(set) {
 }
 
 export default function TodayRecommend() {
+  // 영화 데이터 상태 저장 (오늘 추천 10개)
   const [movies, setMovies] = useState([]);
+  // 로딩 상태 저장
   const [loading, setLoading] = useState(true);
+  // 에러 상태 저장
   const [error, setError] = useState(null);
-
+  // 관심없음 영화 ID 목록 상태 저장 (localStorage에서 초기값 로드)
   const [disliked, setDisliked] = useState(() => loadDislikedIds());
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
 
@@ -109,6 +112,7 @@ export default function TodayRecommend() {
     }
   };
 
+  // 취향 로딩 완료 시 영화 데이터 가져오기 (fetchMovies 3개 API 호출)
   useEffect(() => {
     if (!preferencesLoading) {
       loadRecommendations();

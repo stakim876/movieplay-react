@@ -5,7 +5,7 @@ import { useSubscription } from "@/context/SubscriptionContext";
 import { getPlanById, getAllPlans } from "@/constants/subscriptionPlans";
 import { getPaymentHistory } from "@/services/subscription";
 import PaymentModal from "@/components/subscription/PaymentModal";
-import "./SubscriptionPage.css";
+import "@/styles/subscription/subscription.css";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();

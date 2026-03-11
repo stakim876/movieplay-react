@@ -4,9 +4,11 @@ import { fetchMovies } from "@/services/tmdb.js";
 import "@/styles/components/components.css";
 
 export default function TodayTop10() {
+  // 영화 데이터 상태 저장 (TOP 10)
   const [movies, setMovies] = useState([]);
   const navigate = useNavigate();
 
+  // 페이지 로드 시 영화 데이터 가져오기
   useEffect(() => {
     async function loadTop10() {
       const res = await fetchMovies("/movie/popular?language=ko-KR&page=1");

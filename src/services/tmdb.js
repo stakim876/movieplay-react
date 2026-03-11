@@ -52,6 +52,7 @@ function isSafeMovie(m) {
   return true;
 }
 
+// fetchMovies: TMDB API에 endpoint(예: /movie/popular, /discover/movie?with_genres=28) 요청해서 영화 목록 가져옴. 캐시 사용, 성인 필터 적용 후 { results: [...] } 반환
 export async function fetchMovies(endpoint) {
   try {
     const cleanEndpoint = endpoint.replace(/(\?|&)include_adult=true/g, "");

@@ -11,11 +11,14 @@ import { MovieCardSkeleton } from "@/components/common/Skeleton";
 import "@/styles/components/components.css";
 
 export default function PersonalizedSection({ title, endpoint }) {
+  // 영화 데이터 상태 저장
   const [movies, setMovies] = useState([]);
+  // 로딩 상태 저장
   const [loading, setLoading] = useState(true);
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
   const navigate = useNavigate();
 
+  // endpoint/취향 로딩 완료 시 영화 데이터 가져오기
   useEffect(() => {
     const loadMovies = async () => {
       if (preferencesLoading) return;
