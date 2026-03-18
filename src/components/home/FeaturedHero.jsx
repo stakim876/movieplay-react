@@ -126,10 +126,11 @@ export default function FeaturedHero() {
         {trailerKey ? (
           <iframe
             ref={iframeRef}
-            src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&enablejsapi=1`}
+            src={`https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&enablejsapi=1`}
             title="Featured Trailer"
             className="hero-video"
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
           />
         ) : (

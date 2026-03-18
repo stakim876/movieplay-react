@@ -8,6 +8,7 @@ import {
 } from "@/services/recommendation";
 import MovieCard from "@/components/category/cards/MovieCard";
 import { MovieCardSkeleton } from "@/components/common/Skeleton";
+import { useUserFeedback } from "@/context/UserFeedbackContext";
 import "@/styles/components/components.css";
 
 export default function PersonalizedSection({ title, endpoint }) {
@@ -16,6 +17,7 @@ export default function PersonalizedSection({ title, endpoint }) {
   // 로딩 상태 저장
   const [loading, setLoading] = useState(true);
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
+  const { dislikedIds } = useUserFeedback();
   const navigate = useNavigate();
 
   // endpoint/취향 로딩 완료 시 영화 데이터 가져오기
@@ -26,7 +28,7 @@ export default function PersonalizedSection({ title, endpoint }) {
       try {
         setLoading(true);
         const res = await fetchMovies(endpoint);
-        const allMovies = res?.results || [];
+        const allMovies = (res?.results || []).filter((m) => !dislikedIds.has(m.id));
 
         let recommendedMovies = allMovies;
 

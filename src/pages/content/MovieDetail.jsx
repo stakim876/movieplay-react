@@ -8,7 +8,7 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { useToast } from "@/context/ToastContext";
 import { fetchMovieDetail } from "@/services/tmdb";
 import SeasonList from "@/components/tv/SeasonList";
-import "../../styles/common/common.css";
+import "@/styles/common/common.css";
 import CommentsSection from "@/components/common/CommentsSection";
 
 export default function MovieDetail() {
@@ -139,9 +139,16 @@ export default function MovieDetail() {
 
   if (!movie) return <DetailSkeleton />;
 
-  const fallbackPoster =
-    "https://via.placeholder.com/300x450.png?text=No+Image";
-  const fallbackRec = "https://placehold.co/140x210?text=No+Image";
+  // 포스터 없을 때 쓸 대체 이미지 (SVG placeholder)
+  const fallbackPosterSvg = `data:image/svg+xml,${encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" fill="none"><rect width="300" height="450" fill="#2a2a2e" rx="8"/><g fill="#4a4a52"><path d="M120 180h60v90h-60z"/><circle cx="150" cy="230" r="20"/></g><text x="150" y="320" text-anchor="middle" fill="#6b6b75" font-family="system-ui,sans-serif" font-size="14">이미지 없음</text></svg>'
+  )}`;
+  const fallbackRecSvg = `data:image/svg+xml,${encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 210" fill="none"><rect width="140" height="210" fill="#2a2a2e" rx="6"/><g fill="#4a4a52"><path d="M55 85h30v42h-30z"/><circle cx="70" cy="108" r="10"/></g><text x="70" y="155" text-anchor="middle" fill="#6b6b75" font-family="system-ui,sans-serif" font-size="11">이미지 없음</text></svg>'
+  )}`;
+
+  const fallbackPoster = fallbackPosterSvg;
+  const fallbackRec = fallbackRecSvg;
 
   const backdropUrl = movie.backdrop_path
     ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
@@ -233,10 +240,11 @@ export default function MovieDetail() {
         <div className="trailer-wrapper">
           {trailer ? (
             <iframe
-              src={`https://www.youtube.com/embed/${trailer}?autoplay=1&mute=1&controls=1`}
+              src={`https://www.youtube-nocookie.com/embed/${trailer}?autoplay=1&mute=1&controls=1`}
               title="Trailer"
               frameBorder="0"
-              allow="autoplay; encrypted-media"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="autoplay; encrypted-media; picture-in-picture"
               allowFullScreen
             />
           ) : (

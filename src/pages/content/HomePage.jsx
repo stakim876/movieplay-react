@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useConfig } from "@/context/ConfigContext";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import "../../styles/common/common.css";
+import "@/styles/common/common.css";
 import FeaturedHero from "@/components/home/FeaturedHero";
 import CategoryGrid from "@/components/category/CategoryGrid";
 import CategoryCards from "@/components/category/cards/CategoryCards";
@@ -11,6 +11,7 @@ import TodayTop10 from "@/components/home/TodayTop10";
 import TodayRecommend from "@/components/home/TodayRecommend";
 import WatchAgain from "@/components/home/WatchAgain";
 import PersonalizedSection from "@/components/home/PersonalizedSection";
+import MyListRow from "@/components/home/MyListRow";
 
 export default function HomePage() {
   const { navigation, homeGenres, loading } = useConfig();
@@ -43,6 +44,7 @@ export default function HomePage() {
             <CategoryCards />
             <TodayTop10 />
             <WatchAgain />
+            <MyListRow />
             <TodayRecommend />
             
             <PersonalizedSection

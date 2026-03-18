@@ -40,9 +40,11 @@ export default function CategoryList({ title, genreId }) {
           >
             {hovered === i ? (
               <iframe
-                src={`https://www.youtube.com/embed/${m.trailerKey || ""}?autoplay=1&mute=1&controls=0`}
+                src={`https://www.youtube-nocookie.com/embed/${m.trailerKey || ""}?autoplay=1&mute=1&controls=0`}
                 title={m.title}
-                allow="autoplay; encrypted-media"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
                 frameBorder="0"
               />
             ) : (

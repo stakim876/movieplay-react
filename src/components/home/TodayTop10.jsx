@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchMovies } from "@/services/tmdb.js";
+import HorizontalScroller from "@/components/common/HorizontalScroller";
 import "@/styles/components/components.css";
 
 export default function TodayTop10() {
@@ -20,7 +21,11 @@ export default function TodayTop10() {
   return (
     <section className="today-top10">
       <h2 className="top10-title">오늘의 TOP 10</h2>
-      <div className="top10-row">
+      <HorizontalScroller
+        className="top10-scroller"
+        scrollClassName="top10-row"
+        ariaLabel="today top 10"
+      >
         {movies.map((m, i) => (
           <div
             key={m.id}
@@ -36,7 +41,7 @@ export default function TodayTop10() {
             <p className="movie-name">{m.title}</p>
           </div>
         ))}
-      </div>
+      </HorizontalScroller>
     </section>
   );
 }

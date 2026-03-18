@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchSearchResults } from "@/services/tmdb.js";
+import { fetchPeopleSearch, fetchSearchResults } from "@/services/tmdb.js";
 import { fetchMovies } from "@/services/tmdb.js";
 import MovieCard from "@/components/category/cards/MovieCard";
 import { MovieCardSkeleton } from "@/components/common/Skeleton";
 import SearchSuggestions from "@/components/search/SearchSuggestions";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { useToast } from "@/context/ToastContext";
+import { useUserFeedback } from "@/context/UserFeedbackContext";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import "@/styles/pages/search.css";
 import "@/styles/common/common.css";
@@ -35,10 +36,12 @@ function saveSearchHistory(history) {
 
 export default function SearchPage() {
   const { error: showError } = useToast();
+  const { dislikedIds } = useUserFeedback();
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [movieResults, setMovieResults] = useState([]);
   const [tvResults, setTvResults] = useState([]);
+  const [peopleResults, setPeopleResults] = useState([]);
   const [rawMovieResults, setRawMovieResults] = useState([]);
   const [rawTvResults, setRawTvResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,31 +55,65 @@ export default function SearchPage() {
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
+  const buildExpandedQueries = (q) => {
+    const trimmed = (q || "").trim();
+    if (!trimmed) return [];
+    const noSpace = trimmed.replace(/\s+/g, "");
+    const lowered = trimmed.toLowerCase();
+    const set = new Set([trimmed, noSpace, lowered].filter(Boolean));
+    return Array.from(set).slice(0, 3);
+  };
+
   const performSearch = useCallback(async (searchQuery, applyFilters = true) => {
     if (!searchQuery.trim()) {
       setMovieResults([]);
       setTvResults([]);
+      setPeopleResults([]);
       return;
     }
 
     setLoading(true);
     try {
       console.log("🔍 검색 시작:", searchQuery);
-      const [movieRes, tvRes] = await Promise.all([
-        fetchSearchResults(searchQuery, "movie"),
-        fetchSearchResults(searchQuery, "tv"),
+      const queries = buildExpandedQueries(searchQuery);
+      const [movieResList, tvResList, peopleRes] = await Promise.all([
+        Promise.all(queries.map((q) => fetchSearchResults(q, "movie"))),
+        Promise.all(queries.map((q) => fetchSearchResults(q, "tv"))),
+        fetchPeopleSearch(searchQuery),
       ]);
+
+      const mergeUnique = (list) => {
+        const map = new Map();
+        for (const res of list) {
+          for (const item of res?.results || []) {
+            if (!item?.id) continue;
+            if (!map.has(item.id)) map.set(item.id, item);
+          }
+        }
+        return Array.from(map.values());
+      };
+
+      const movieRes = { results: mergeUnique(movieResList) };
+      const tvRes = { results: mergeUnique(tvResList) };
 
       console.log("📊 검색 결과:", {
         movies: movieRes.results?.length || 0,
         tvs: tvRes.results?.length || 0,
+        people: peopleRes.results?.length || 0,
       });
 
       let movies = movieRes.results || [];
       let tvs = tvRes.results || [];
+      const people = (peopleRes.results || []).slice(0, 30);
+
+      if (dislikedIds.size > 0) {
+        movies = movies.filter((m) => !dislikedIds.has(m.id));
+        tvs = tvs.filter((t) => !dislikedIds.has(t.id));
+      }
 
       setRawMovieResults(movies);
       setRawTvResults(tvs);
+      setPeopleResults(people);
 
       if (applyFilters) {
         if (selectedGenre) {
@@ -117,6 +154,7 @@ export default function SearchPage() {
       console.error("❌ 검색 오류:", err);
       setMovieResults([]);
       setTvResults([]);
+      setPeopleResults([]);
       showError("검색 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
       setLoading(false);
@@ -134,6 +172,7 @@ export default function SearchPage() {
       setQuery("");
       setMovieResults([]);
       setTvResults([]);
+      setPeopleResults([]);
     }
   }, [location.search, performSearch]);
 
@@ -216,7 +255,9 @@ export default function SearchPage() {
   };
 
   const currentResults =
-    activeTab === "movie"
+    activeTab === "people"
+      ? peopleResults
+      : activeTab === "movie"
       ? movieResults
       : activeTab === "tv"
       ? tvResults
@@ -260,7 +301,7 @@ export default function SearchPage() {
         </form>
       </div>
 
-      {hasQuery && hasResults && (
+      {hasQuery && (
         <>
           <div className="search-tabs">
             <button
@@ -281,8 +322,15 @@ export default function SearchPage() {
             >
               드라마 ({tvResults.length})
             </button>
+            <button
+              className={`search-tab ${activeTab === "people" ? "active" : ""}`}
+              onClick={() => setActiveTab("people")}
+            >
+              인물 ({peopleResults.length})
+            </button>
           </div>
 
+          {activeTab !== "people" && hasResults && (
           <div className="search-results-header">
             <div className="search-results-count">
               "{query}"에 대한 검색 결과 {currentResults.length}개
@@ -328,6 +376,7 @@ export default function SearchPage() {
               )}
             </div>
           </div>
+          )}
         </>
       )}
 
@@ -341,14 +390,45 @@ export default function SearchPage() {
         </div>
       ) : hasQuery && hasResults ? (
         <div className="search-results-grid">
-          <div className="movie-grid fade-in">
-            {currentResults.map((item) => (
-              <MovieCard
-                key={`${item.media_type || "movie"}-${item.id}`}
-                movie={{ ...item, media_type: item.media_type || activeTab || "movie" }}
-              />
-            ))}
-          </div>
+          {activeTab === "people" ? (
+            <div className="people-grid fade-in">
+              {peopleResults.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className="person-card"
+                  onClick={() => navigate(`/person/${p.id}`)}
+                >
+                  <div className="person-photo">
+                    {p.profile_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w185${p.profile_path}`}
+                        alt={p.name}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="person-photo-fallback">👤</div>
+                    )}
+                  </div>
+                  <div className="person-info">
+                    <div className="person-title">{p.name}</div>
+                    {p.known_for_department && (
+                      <div className="person-subtitle">{p.known_for_department}</div>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="movie-grid fade-in">
+              {currentResults.map((item) => (
+                <MovieCard
+                  key={`${item.media_type || "movie"}-${item.id}`}
+                  movie={{ ...item, media_type: item.media_type || activeTab || "movie" }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       ) : hasQuery && !hasResults ? (
         <div className="search-empty-state">

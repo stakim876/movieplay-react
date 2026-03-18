@@ -1,5 +1,5 @@
 import { doc, setDoc, updateDoc, collection, addDoc, getDocs, query, orderBy, limit, Timestamp, serverTimestamp } from "firebase/firestore";
-import { db } from "./firebase";
+import { db } from "@/services/firebase";
 import { getPlanById } from "@/constants/subscriptionPlans";
 
 export async function createSubscription(userId, planId, isYearly = false) {

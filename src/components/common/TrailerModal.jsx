@@ -17,7 +17,7 @@ export default function TrailerModal({ isOpen, onClose, movie }) {
 
   const trailerUrl =
     movie.trailerUrl ||
-    `https://www.youtube.com/embed/${movie.trailerKey || "dQw4w9WgXcQ"}?autoplay=1&rel=0`;
+    `https://www.youtube-nocookie.com/embed/${movie.trailerKey || "dQw4w9WgXcQ"}?autoplay=1&rel=0`;
 
   return (
     <div className="trailer-modal-overlay" onClick={onClose}>
@@ -37,6 +37,7 @@ export default function TrailerModal({ isOpen, onClose, movie }) {
               src={trailerUrl}
               title={`${movie.title || movie.name} 예고편`}
               frameBorder="0"
+              referrerPolicy="strict-origin-when-cross-origin"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>

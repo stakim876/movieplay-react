@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { fetchMovieDetail } from "@/services/tmdb";
 import VideoPlayer from "@/components/player/VideoPlayer";
@@ -8,16 +8,20 @@ import { DetailSkeleton } from "@/components/common/Skeleton";
 import "@/styles/common/common.css";
 
 export default function PlayerPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id || null;
   const location = useLocation();
   const navigate = useNavigate();
   const { error: showError } = useToast();
+
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const typeFromQuery = searchParams.get("type");
+  const mediaType = (params.type || typeFromQuery || (location.pathname.startsWith("/tv/") ? "tv" : "movie")) === "tv"
+    ? "tv"
+    : "movie";
   
-  const mediaType = location.pathname.startsWith("/tv/") ? "tv" : "movie";
-  
-  const searchParams = new URLSearchParams(location.search);
-  const seasonNumber = searchParams.get("season") ? parseInt(searchParams.get("season")) : null;
-  const episodeNumber = searchParams.get("episode") ? parseInt(searchParams.get("episode")) : null;
+  const seasonNumber = searchParams.get("season") ? parseInt(searchParams.get("season"), 10) : null;
+  const episodeNumber = searchParams.get("episode") ? parseInt(searchParams.get("episode"), 10) : null;
 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +32,7 @@ export default function PlayerPage() {
       setLoading(true);
       setError(null);
       try {
+        if (!id) throw new Error("재생할 콘텐츠가 없습니다.");
         const data = await fetchMovieDetail(id, mediaType);
         
         const blockKeywords = [

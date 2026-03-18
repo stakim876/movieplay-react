@@ -5,7 +5,7 @@ import {
   getGenres,
   getNavigation,
   getHomeGenres,
-} from "@/api/config";
+} from "@/services/firestore/config";
 
 const ConfigContext = createContext();
 

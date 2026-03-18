@@ -1,0 +1,21 @@
+export const ADULT_FILTER_FALLBACK_KEYWORDS = [
+  "sex",
+  "섹스",
+  "sensual",
+  "erotic",
+  "fetish",
+  "porn",
+  "porno",
+  "pornography",
+  "av ",
+  "av-",
+  " jav",
+  "nude",
+  "누드",
+  "노출",
+  "19금",
+  "18+",
+  "성인",
+  "에로",
+];
+

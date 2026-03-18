@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useConfig } from "@/context/ConfigContext";
+import HorizontalScroller from "@/components/common/HorizontalScroller";
 import "@/styles/components/components.css";
 
 export default function CategoryCards() {
@@ -22,7 +23,11 @@ export default function CategoryCards() {
 
   return (
     <div className="category-cards-container">
-      <div className="category-cards">
+      <HorizontalScroller
+        className="category-cards-scroller"
+        scrollClassName="category-cards"
+        ariaLabel="category shortcuts"
+      >
         {categories.map((cat) => (
           <div
             key={cat.id}
@@ -36,7 +41,7 @@ export default function CategoryCards() {
             )}
           </div>
         ))}
-      </div>
+      </HorizontalScroller>
     </div>
   );
 }

@@ -3,9 +3,11 @@ import { fetchMovies } from "@/services/tmdb.js";
 import MovieCard from "@/components/category/cards/MovieCard";
 import { MovieCardSkeleton } from "@/components/common/Skeleton";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
+import HorizontalScroller from "@/components/common/HorizontalScroller";
+import { useUserFeedback } from "@/context/UserFeedbackContext";
 import "@/styles/components/components.css";
 
-export default function CategoryGrid({ title, category, type, genreId }) {
+export default function CategoryGrid({ title, category, type, genreId, endpoint }) {
   // 영화 데이터 상태 저장
   const [movies, setMovies] = useState([]);
   // 로딩 상태 저장
@@ -15,6 +17,7 @@ export default function CategoryGrid({ title, category, type, genreId }) {
   // 더 불러올 데이터 존재 여부 상태 저장
   const [hasMore, setHasMore] = useState(true);
   const rowRef = useRef(null);
+  const { dislikedIds } = useUserFeedback();
   
   useKeyboardNavigation(rowRef, ".movie-card");
 
@@ -77,7 +80,15 @@ export default function CategoryGrid({ title, category, type, genreId }) {
       try {
         let url = "";
 
-        if (category && type) {
+        if (endpoint) {
+          if (endpoint.includes("{page}")) {
+            url = endpoint.replace("{page}", String(page));
+          } else if (endpoint.includes("page=")) {
+            url = endpoint.replace(/page=\d+/i, `page=${page}`);
+          } else {
+            url = `${endpoint}${endpoint.includes("?") ? "&" : "?"}page=${page}`;
+          }
+        } else if (category && type) {
           url = `/${type}/${category}?language=ko-KR&page=${page}&include_adult=false`;
         } else if (genreId) {
           url = `/discover/movie?with_genres=${genreId}&language=ko-KR&page=${page}&include_adult=false`;
@@ -88,7 +99,9 @@ export default function CategoryGrid({ title, category, type, genreId }) {
         setLoading(page === 1);
         const res = await fetchMovies(url);
 
-        const filtered = (res.results || []).filter(isSafeContent);
+        const filtered = (res.results || [])
+          .filter(isSafeContent)
+          .filter((m) => !dislikedIds.has(m.id));
 
         if (page === 1) {
           setMovies(filtered);
@@ -106,15 +119,15 @@ export default function CategoryGrid({ title, category, type, genreId }) {
     }
 
     loadMovies();
-  }, [page, category, type, genreId, hasMore]);
+  }, [page, category, type, genreId, endpoint, hasMore]);
 
   // 가로 스크롤 끝 도달 시 다음 페이지 로드 (setPage 증가 → 위 useEffect에서 fetchMovies)
   useEffect(() => {
-    const scrollWrapper = rowRef.current?.closest(".scroll-wrapper");
-    if (!scrollWrapper || !hasMore) return;
+    const scrollEl = rowRef.current;
+    if (!scrollEl || !hasMore) return;
 
     const handleScroll = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollWrapper;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollEl;
       const threshold = 200;
 
       if (scrollWidth - scrollLeft - clientWidth < threshold) {
@@ -122,8 +135,8 @@ export default function CategoryGrid({ title, category, type, genreId }) {
       }
     };
 
-    scrollWrapper.addEventListener("scroll", handleScroll);
-    return () => scrollWrapper.removeEventListener("scroll", handleScroll);
+    scrollEl.addEventListener("scroll", handleScroll);
+    return () => scrollEl.removeEventListener("scroll", handleScroll);
   }, [hasMore]);
 
   return (
@@ -131,16 +144,26 @@ export default function CategoryGrid({ title, category, type, genreId }) {
       {title && <h2 className="category-title">{title}</h2>}
 
       {loading ? (
-        <div className="scroll-wrapper">
-          <div className="movie-row" ref={rowRef}>
+        <HorizontalScroller
+          className="category-grid-scroller"
+          scrollClassName="scroll-wrapper"
+          ariaLabel={title || "movies"}
+          ref={rowRef}
+        >
+          <div className="movie-row">
             {[...Array(6)].map((_, i) => (
               <MovieCardSkeleton key={i} />
             ))}
           </div>
-        </div>
+        </HorizontalScroller>
       ) : movies.length > 0 ? (
-        <div className="scroll-wrapper">
-          <div className="movie-row fade-in" ref={rowRef}>
+        <HorizontalScroller
+          className="category-grid-scroller"
+          scrollClassName="scroll-wrapper"
+          ariaLabel={title || "movies"}
+          ref={rowRef}
+        >
+          <div className="movie-row fade-in">
             {movies.map((m) => (
               <MovieCard key={m.id} movie={m} />
             ))}
@@ -152,7 +175,7 @@ export default function CategoryGrid({ title, category, type, genreId }) {
               </>
             )}
           </div>
-        </div>
+        </HorizontalScroller>
       ) : (
         <p className="no-results">영화가 없습니다.</p>
       )}

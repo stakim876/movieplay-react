@@ -10,6 +10,8 @@ import { ConfigProvider } from "@/context/ConfigContext.jsx";
 import { ToastProvider } from "@/context/ToastContext.jsx";
 import { ThemeProvider } from "@/context/ThemeContext.jsx";
 import { SubscriptionProvider } from "@/context/SubscriptionContext.jsx";
+import { UserFeedbackProvider } from "@/context/UserFeedbackContext.jsx";
+import { NotificationsProvider } from "@/context/NotificationsContext.jsx";
 
 import Header from "@/components/layout/Header.jsx";
 import Sidebar from "@/components/layout/Sidebar.jsx";
@@ -30,6 +32,8 @@ const SearchPage = lazy(() => import("@/pages/content/SearchPage.jsx"));
 const MovieDetail = lazy(() => import("@/pages/content/MovieDetail.jsx"));
 const CategoryPage = lazy(() => import("@/pages/content/CategoryPage.jsx"));
 const DiscoverPage = lazy(() => import("@/pages/content/DiscoverPage.jsx"));
+const NewHotPage = lazy(() => import("@/pages/content/NewHotPage.jsx"));
+const PersonPage = lazy(() => import("@/pages/content/PersonPage.jsx"));
 const WhoPage = lazy(() => import("@/pages/auth/WhoPage.jsx"));
 const PlayerPage = lazy(() => import("@/pages/player/PlayerPage.jsx"));
 
@@ -74,6 +78,8 @@ function AppContent() {
           <SubscriptionProvider>
             <MovieProvider>
               <FavoritesProvider>
+                <UserFeedbackProvider>
+                  <NotificationsProvider>
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/login" element={<LoginPage />} />
@@ -149,6 +155,15 @@ function AppContent() {
                       />
 
                       <Route
+                        path="/person/:id"
+                        element={
+                          <PrivateRoute>
+                            <PersonPage />
+                          </PrivateRoute>
+                        }
+                      />
+
+                      <Route
                         path="/movie/:id"
                         element={
                           <PrivateRoute>
@@ -194,6 +209,15 @@ function AppContent() {
                       />
 
                       <Route
+                        path="/new-hot"
+                        element={
+                          <PrivateRoute>
+                            <NewHotPage />
+                          </PrivateRoute>
+                        }
+                      />
+
+                      <Route
                         path="/favorites"
                         element={
                           <PrivateRoute>
@@ -204,6 +228,24 @@ function AppContent() {
 
                       <Route
                         path="/player"
+                        element={
+                          <PrivateRoute>
+                            <PlayerPage />
+                          </PrivateRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/player/:id"
+                        element={
+                          <PrivateRoute>
+                            <PlayerPage />
+                          </PrivateRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/player/:type/:id"
                         element={
                           <PrivateRoute>
                             <PlayerPage />
@@ -224,6 +266,8 @@ function AppContent() {
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </Suspense>
+                  </NotificationsProvider>
+                </UserFeedbackProvider>
               </FavoritesProvider>
             </MovieProvider>
           </SubscriptionProvider>

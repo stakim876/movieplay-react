@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
+import { useNotifications } from "@/context/NotificationsContext";
 import { FaSearch, FaBell, FaCaretDown, FaBars, FaTimes, FaCreditCard } from "react-icons/fa";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import "@/styles/components/components.css";
@@ -19,11 +20,13 @@ export default function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const location = useLocation();
 
   const navigate = useNavigate();
   const auth = useAuth();
   const { warning: showWarning } = useToast();
+  const { items: notifItems, unreadCount, markAllRead, markRead } = useNotifications();
   if (!auth) return null;
   const { user, logout } = auth;
 
@@ -126,10 +129,13 @@ export default function Header() {
       if (mobileMenuOpen && !e.target.closest('.mobile-menu') && !e.target.closest('.mobile-menu-btn')) {
         setMobileMenuOpen(false);
       }
+      if (notifOpen && !e.target.closest(".notif-panel") && !e.target.closest(".notif-btn")) {
+        setNotifOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, notifOpen]);
 
   return (
     <header className={`header ${scrolled ? "scrolled" : ""}`}>
@@ -154,6 +160,13 @@ export default function Header() {
             className={`nav-item ${isActive("/home") || location.pathname === "/" ? "active" : ""}`}
           >
             홈
+          </Link>
+
+          <Link
+            to="/new-hot"
+            className={`nav-item ${isActive("/new-hot") ? "active" : ""}`}
+          >
+            New & Hot
           </Link>
 
           <div
@@ -281,6 +294,63 @@ export default function Header() {
 
           {user && (
             <div className="header-profile">
+              <div className="notif-wrapper">
+                <button
+                  type="button"
+                  className="header-icon-btn notif-btn"
+                  onClick={() => setNotifOpen((v) => !v)}
+                  title="알림"
+                  aria-label="알림"
+                >
+                  <FaBell />
+                  {unreadCount > 0 && (
+                    <span className="notif-badge" aria-label={`unread ${unreadCount}`}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {notifOpen && (
+                  <div className="notif-panel" onClick={(e) => e.stopPropagation()}>
+                    <div className="notif-header">
+                      <span className="notif-title">새 소식</span>
+                      <button
+                        type="button"
+                        className="notif-action"
+                        onClick={markAllRead}
+                        disabled={!notifItems?.length}
+                      >
+                        모두 읽음
+                      </button>
+                    </div>
+                    <div className="notif-list">
+                      {(notifItems || []).length === 0 ? (
+                        <div className="notif-empty">알림이 없습니다.</div>
+                      ) : (
+                        (notifItems || []).slice(0, 20).map((n) => (
+                          <button
+                            key={n.id}
+                            type="button"
+                            className={`notif-item ${n.read ? "read" : "unread"}`}
+                            onClick={() => {
+                              markRead(n.id);
+                              const p = n.payload;
+                              if (p?.media_type && p?.id) {
+                                window.location.href = `/${p.media_type}/${p.id}`;
+                              }
+                            }}
+                          >
+                            <div className="notif-item-title">{n.title}</div>
+                            <div className="notif-item-msg">{n.message}</div>
+                            <div className="notif-item-time">{(n.createdAt || "").slice(0, 16).replace("T", " ")}</div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {activeProfile && (
                 <button
                   type="button"

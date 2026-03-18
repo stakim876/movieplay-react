@@ -4,9 +4,9 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 export async function getProfiles() {
   try {
     const snapshot = await getDocs(collection(db, "config", "app", "profiles"));
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
     }));
   } catch (error) {
     console.error("프로필 목록 불러오기 실패:", error);
@@ -22,9 +22,9 @@ export async function getProfiles() {
 export async function getCategories() {
   try {
     const snapshot = await getDocs(collection(db, "config", "app", "categories"));
-    const categories = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    const categories = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
     }));
     return categories.sort((a, b) => (a.order || 0) - (b.order || 0));
   } catch (error) {
@@ -76,10 +76,10 @@ export async function getCategories() {
 export async function getGenres() {
   try {
     const snapshot = await getDocs(collection(db, "config", "app", "genres"));
-    const genres = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      genreId: parseInt(doc.id),
-      ...doc.data(),
+    const genres = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      genreId: parseInt(docSnap.id, 10),
+      ...docSnap.data(),
     }));
     return genres.sort((a, b) => (a.order || 0) - (b.order || 0));
   } catch (error) {
@@ -166,3 +166,4 @@ export async function getHomeGenres() {
     }));
   }
 }
+

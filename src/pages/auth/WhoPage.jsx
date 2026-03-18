@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useConfig } from "@/context/ConfigContext";
 import { useToast } from "@/context/ToastContext";
-import "../../styles/common/common.css";
+import "@/styles/common/common.css";
 
 export default function WhoPage() {
   const navigate = useNavigate();
@@ -9,8 +9,41 @@ export default function WhoPage() {
   const { info: showInfo } = useToast();
 
   const handleProfileClick = (profile) => {
-    console.log("선택된 프로필:", profile.name);
-    localStorage.setItem("selectedProfile", profile.name);
+    const profileKey = profile?.name || "default";
+    let localSettings = {};
+    try {
+      const raw = localStorage.getItem("mp_profile_settings_v1");
+      localSettings = raw ? JSON.parse(raw) : {};
+    } catch {
+      localSettings = {};
+    }
+    const local = localSettings?.[profileKey] || {};
+
+    // PIN: 로컬 설정이 우선, 없으면 프로필 문서 pin 사용
+    const expectedPin = local?.pin ?? profile?.pin ?? null;
+    if (expectedPin) {
+      const entered = window.prompt("PIN을 입력하세요");
+      if (entered === null) return;
+      if (String(entered).trim() !== String(expectedPin).trim()) {
+        showInfo("PIN이 올바르지 않습니다.");
+        return;
+      }
+    }
+
+    localStorage.setItem("selectedProfile", profileKey);
+    localStorage.setItem("mp_active_profile_v1", profileKey);
+
+    // kids 플래그는 클라이언트 필터에서 사용 (로컬 우선)
+    try {
+      localSettings[profileKey] = {
+        ...(localSettings[profileKey] || {}),
+        kids: local?.kids ?? !!profile?.kids,
+      };
+      localStorage.setItem("mp_profile_settings_v1", JSON.stringify(localSettings));
+    } catch {
+      // ignore
+    }
+
     navigate("/");
   };
 

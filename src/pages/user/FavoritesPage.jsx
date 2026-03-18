@@ -5,8 +5,8 @@ import { useToast } from "@/context/ToastContext";
 import MovieCard from "@/components/category/cards/MovieCard";
 import { MovieCardSkeleton } from "@/components/common/Skeleton";
 import { FaTrash, FaSort, FaFilter } from "react-icons/fa";
-import "../../styles/common/common.css";
-import "../../styles/pages/favorites.css";
+import "@/styles/common/common.css";
+import "@/styles/pages/favorites.css";
 
 const SORT_OPTIONS = [
   { value: "recent", label: "최근 추가순" },

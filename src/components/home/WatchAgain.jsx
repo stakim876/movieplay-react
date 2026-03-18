@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWatchHistory } from "@/context/WatchHistoryContext";
 import { fetchMovieDetail } from "@/services/tmdb.js";
 import { FaPlay, FaCheckCircle } from "react-icons/fa";
+import HorizontalScroller from "@/components/common/HorizontalScroller";
 import "@/styles/components/components.css";
 
 export default function WatchAgain() {
@@ -108,17 +109,27 @@ export default function WatchAgain() {
           </button>
         </div>
       </div>
-      <div className="watch-row">
+      <HorizontalScroller
+        className="watch-scroller"
+        scrollClassName="watch-row"
+        ariaLabel="continue watching"
+      >
         {sortedItems.map((item) => {
           const progress = item.watchProgress;
           const isCompleted = progress?.progressPercent >= 90;
           const mediaType = item.media_type || (item.first_air_date ? "tv" : "movie");
+          const startSeason = item.episodeInfo?.season ?? 1;
+          const startEpisode = item.episodeInfo?.episode ?? 1;
+          const playHref =
+            mediaType === "tv"
+              ? `/player/tv/${item.id}?season=${startSeason}&episode=${startEpisode}`
+              : `/player/${item.id}`;
           
           return (
             <div
               key={item.id}
               className={`watch-card ${isCompleted ? "completed" : ""}`}
-              onClick={() => navigate(`/${mediaType}/${item.id}`)}
+              onClick={() => navigate(playHref)}
             >
               <div className="watch-poster-wrapper">
                 <img
@@ -126,6 +137,18 @@ export default function WatchAgain() {
                   alt={item.title || item.name}
                   className="watch-poster"
                 />
+                <button
+                  type="button"
+                  className="watch-play-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(playHref);
+                  }}
+                  aria-label="이어보기"
+                  title="이어보기"
+                >
+                  <FaPlay />
+                </button>
                 {isCompleted && (
                   <div className="watch-completed-badge">
                     <FaCheckCircle />
@@ -162,7 +185,7 @@ export default function WatchAgain() {
             </div>
           );
         })}
-      </div>
+      </HorizontalScroller>
     </section>
   );
 }

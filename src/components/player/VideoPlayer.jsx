@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWatchHistory } from "@/context/WatchHistoryContext";
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, FaCompress, FaBackward, FaForward } from "react-icons/fa";
+import { fetchTVSeason } from "@/services/tmdb";
 import "@/styles/components/player.css";
 
 export default function VideoPlayer({ 
@@ -12,6 +13,8 @@ export default function VideoPlayer({
   onClose,
   videoUrl = null 
 }) {
+  const INTRO_SKIP_SECONDS = 85;
+  const CREDITS_SKIP_TO_END_BUFFER_SECONDS = 30;
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const progressBarRef = useRef(null);
@@ -25,11 +28,82 @@ export default function VideoPlayer({
   const [isLoading, setIsLoading] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showSettings, setShowSettings] = useState(false);
+  const [isPiP, setIsPiP] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showNextUp, setShowNextUp] = useState(false);
+  const [nextUpSeconds, setNextUpSeconds] = useState(8);
+  const [resolvedNextUrl, setResolvedNextUrl] = useState(null);
+  const [resolvedPrevUrl, setResolvedPrevUrl] = useState(null);
   
   const navigate = useNavigate();
   const { updateWatchProgress, getWatchProgress } = useWatchHistory();
   
   const controlsTimeoutRef = useRef(null);
+  const nextUpTimerRef = useRef(null);
+
+  const canNextEpisode = useMemo(() => {
+    return mediaType === "tv" && seasonNumber !== null && episodeNumber !== null;
+  }, [mediaType, seasonNumber, episodeNumber]);
+
+  const tvEpisodeBase = useMemo(() => {
+    if (!canNextEpisode || !movie?.id) return null;
+    return `/player/tv/${movie.id}`;
+  }, [canNextEpisode, movie?.id]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function resolveNav() {
+      if (!tvEpisodeBase || seasonNumber === null || episodeNumber === null) {
+        setResolvedNextUrl(null);
+        setResolvedPrevUrl(null);
+        return;
+      }
+
+      try {
+        const seasons = Array.isArray(movie?.seasons) ? movie.seasons : [];
+        const seasonNumbers = seasons
+          .map((s) => s?.season_number)
+          .filter((n) => Number.isInteger(n) && n > 0);
+        const lastSeason = seasonNumbers.length ? Math.max(...seasonNumbers) : seasonNumber;
+
+        const seasonData = await fetchTVSeason(movie.id, seasonNumber);
+        const episodes = seasonData?.episodes || [];
+        const maxEp = episodes.length || episodeNumber;
+
+        let next = null;
+        if (episodeNumber < maxEp) {
+          next = { season: seasonNumber, episode: episodeNumber + 1 };
+        } else if (seasonNumber < lastSeason) {
+          next = { season: seasonNumber + 1, episode: 1 };
+        }
+
+        let prev = null;
+        if (episodeNumber > 1) {
+          prev = { season: seasonNumber, episode: episodeNumber - 1 };
+        } else if (seasonNumber > 1) {
+          const prevSeason = seasonNumber - 1;
+          const prevSeasonData = await fetchTVSeason(movie.id, prevSeason);
+          const prevMaxEp = (prevSeasonData?.episodes || []).length || 1;
+          prev = { season: prevSeason, episode: prevMaxEp };
+        }
+
+        if (cancelled) return;
+        setResolvedNextUrl(next ? `${tvEpisodeBase}?season=${next.season}&episode=${next.episode}` : null);
+        setResolvedPrevUrl(prev ? `${tvEpisodeBase}?season=${prev.season}&episode=${prev.episode}` : null);
+      } catch (e) {
+        if (cancelled) return;
+        console.warn("Failed to resolve episode navigation:", e);
+        setResolvedNextUrl(null);
+        setResolvedPrevUrl(null);
+      }
+    }
+
+    resolveNav();
+    return () => {
+      cancelled = true;
+    };
+  }, [tvEpisodeBase, movie?.id, movie?.seasons, seasonNumber, episodeNumber]);
 
   useEffect(() => {
     if (!movie) return;
@@ -82,6 +156,12 @@ export default function VideoPlayer({
           episodeNumber
         );
       }
+
+      if (resolvedNextUrl) {
+        setShowControls(true);
+        setShowNextUp(true);
+        setNextUpSeconds(8);
+      }
     };
 
     const handlePlay = () => setIsPlaying(true);
@@ -101,6 +181,47 @@ export default function VideoPlayer({
       video.removeEventListener("pause", handlePause);
     };
   }, [movie, mediaType, seasonNumber, episodeNumber, duration, updateWatchProgress]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onEnter = () => setIsPiP(true);
+    const onLeave = () => setIsPiP(false);
+
+    video.addEventListener("enterpictureinpicture", onEnter);
+    video.addEventListener("leavepictureinpicture", onLeave);
+
+    return () => {
+      video.removeEventListener("enterpictureinpicture", onEnter);
+      video.removeEventListener("leavepictureinpicture", onLeave);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!showNextUp || !resolvedNextUrl) return;
+
+    if (nextUpTimerRef.current) clearInterval(nextUpTimerRef.current);
+    nextUpTimerRef.current = setInterval(() => {
+      setNextUpSeconds((s) => {
+        const next = s - 1;
+        if (next <= 0) {
+          clearInterval(nextUpTimerRef.current);
+          nextUpTimerRef.current = null;
+          navigate(resolvedNextUrl);
+          return 0;
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => {
+      if (nextUpTimerRef.current) {
+        clearInterval(nextUpTimerRef.current);
+        nextUpTimerRef.current = null;
+      }
+    };
+  }, [showNextUp, resolvedNextUrl, navigate]);
 
   useEffect(() => {
     if (!showControls) return;
@@ -192,6 +313,26 @@ export default function VideoPlayer({
     }
   };
 
+  const togglePiP = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+        setIsPiP(false);
+        return;
+      }
+      if (document.pictureInPictureEnabled) {
+        await video.requestPictureInPicture();
+        setIsPiP(true);
+      }
+    } catch (e) {
+      // PiP는 브라우저/정책에 따라 실패할 수 있음
+      console.warn("PiP not available:", e);
+    }
+  };
+
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
@@ -260,6 +401,29 @@ export default function VideoPlayer({
         case "M":
           e.preventDefault();
           toggleMute();
+          break;
+        case "p":
+        case "P":
+          e.preventDefault();
+          togglePiP();
+          break;
+        case "i":
+        case "I":
+          e.preventDefault();
+          skip(INTRO_SKIP_SECONDS);
+          break;
+        case "c":
+        case "C":
+          e.preventDefault();
+          if (duration) {
+            const target = Math.max(0, duration - CREDITS_SKIP_TO_END_BUFFER_SECONDS);
+            const video = videoRef.current;
+            if (video) video.currentTime = target;
+          }
+          break;
+        case "?":
+          e.preventDefault();
+          setShowHelp((v) => !v);
           break;
         case "Escape":
           if (isFullscreen) {
@@ -333,6 +497,62 @@ export default function VideoPlayer({
         onClick={togglePlay}
         onDoubleClick={toggleFullscreen}
       />
+
+      {showNextUp && resolvedNextUrl && (
+        <div className="nextup-overlay" onClick={() => setShowControls(true)}>
+          <div className="nextup-card">
+            <div className="nextup-title">다음 화로 이동</div>
+            <div className="nextup-sub">
+              {nextUpSeconds}초 후 자동 재생
+            </div>
+            <div className="nextup-actions">
+              <button
+                type="button"
+                className="nextup-btn primary"
+                onClick={() => navigate(resolvedNextUrl)}
+              >
+                지금 재생
+              </button>
+              <button
+                type="button"
+                className="nextup-btn"
+                onClick={() => {
+                  setShowNextUp(false);
+                  if (nextUpTimerRef.current) {
+                    clearInterval(nextUpTimerRef.current);
+                    nextUpTimerRef.current = null;
+                  }
+                }}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHelp && (
+        <div className="player-help-overlay" onClick={() => setShowHelp(false)}>
+          <div className="player-help" onClick={(e) => e.stopPropagation()}>
+            <div className="player-help-title">단축키</div>
+            <ul className="player-help-list">
+              <li><b>Space</b> 재생/일시정지</li>
+              <li><b>← / →</b> 10초 이동</li>
+              <li><b>↑ / ↓</b> 볼륨</li>
+              <li><b>F</b> 전체화면</li>
+              <li><b>M</b> 음소거</li>
+              <li><b>I</b> 인트로 스킵</li>
+              <li><b>C</b> 크레딧 스킵</li>
+              <li><b>P</b> PiP</li>
+              <li><b>?</b> 도움말</li>
+              <li><b>Esc</b> 닫기</li>
+            </ul>
+            <button type="button" className="player-help-close" onClick={() => setShowHelp(false)}>
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
 
       {showControls && (
         <div className="video-player-controls">
@@ -437,6 +657,72 @@ export default function VideoPlayer({
               </div>
 
               <div className="player-controls-right">
+                {duration > 0 && currentTime < 120 && (
+                  <button
+                    className="player-control-btn"
+                    onClick={() => skip(INTRO_SKIP_SECONDS)}
+                    aria-label="인트로 스킵"
+                    title="인트로 스킵 (I)"
+                  >
+                    Intro
+                  </button>
+                )}
+
+                {duration > 0 && duration - currentTime < 90 && (
+                  <button
+                    className="player-control-btn"
+                    onClick={() => {
+                      const video = videoRef.current;
+                      if (!video) return;
+                      video.currentTime = Math.max(0, duration - CREDITS_SKIP_TO_END_BUFFER_SECONDS);
+                    }}
+                    aria-label="크레딧 스킵"
+                    title="크레딧 스킵 (C)"
+                  >
+                    Credits
+                  </button>
+                )}
+
+                <button
+                  className="player-control-btn"
+                  onClick={() => setShowHelp((v) => !v)}
+                  aria-label="단축키"
+                  title="단축키 (?)"
+                >
+                  ?
+                </button>
+
+                <button
+                  className="player-control-btn"
+                  onClick={togglePiP}
+                  aria-label="PiP"
+                  title={isPiP ? "PiP 종료 (P)" : "PiP (P)"}
+                >
+                  ⧉
+                </button>
+
+                {resolvedPrevUrl && (
+                  <button
+                    className="player-control-btn"
+                    onClick={() => navigate(resolvedPrevUrl)}
+                    aria-label="이전 화"
+                    title="이전 화"
+                  >
+                    ⏮
+                  </button>
+                )}
+
+                {resolvedNextUrl && (
+                  <button
+                    className="player-control-btn"
+                    onClick={() => navigate(resolvedNextUrl)}
+                    aria-label="다음 화"
+                    title="다음 화"
+                  >
+                    ⏭
+                  </button>
+                )}
+
                 <div className="player-settings">
                   <button
                     className="player-control-btn"

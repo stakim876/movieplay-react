@@ -1,5 +1,8 @@
 import { getAdultKeywords } from "@/services/adultFilter";
 import { apiCache } from "@/utils/cache";
+import { ADULT_FILTER_FALLBACK_KEYWORDS } from "@/constants/adultFilterFallbackKeywords";
+import { getActiveProfileKey } from "@/utils/activeProfile";
+import { KIDS_BANNED_GENRE_IDS, KIDS_BANNED_KEYWORDS } from "@/constants/kidsFilter";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -14,11 +17,20 @@ let keywordsLoading = true;
 async function loadKeywordFilter() {
   try {
     keywordsLoading = true;
-    loadedKeywords = await getAdultKeywords();
+    const dbKeywords = await getAdultKeywords();
+    const merged = [...ADULT_FILTER_FALLBACK_KEYWORDS, ...(dbKeywords || [])];
+    loadedKeywords = Array.from(
+      new Set(
+        merged
+          .filter(Boolean)
+          .map((k) => String(k).trim())
+          .filter((k) => k.length > 0)
+      )
+    );
     console.log("🔥 Firestore 금칙어 로딩됨:", loadedKeywords.length, "개");
   } catch (e) {
     console.error("금칙어 로딩 실패:", e);
-    loadedKeywords = [];
+    loadedKeywords = [...ADULT_FILTER_FALLBACK_KEYWORDS];
   } finally {
     keywordsLoading = false;
   }
@@ -27,6 +39,17 @@ async function loadKeywordFilter() {
 loadKeywordFilter();
 
 const bannedGenreIds = [867];
+
+function isKidsMode() {
+  try {
+    const key = getActiveProfileKey();
+    const raw = localStorage.getItem("mp_profile_settings_v1");
+    const parsed = raw ? JSON.parse(raw) : {};
+    return !!parsed?.[key]?.kids;
+  } catch {
+    return false;
+  }
+}
 
 function isSafeMovie(m) {
   if (!m) return false;
@@ -39,6 +62,11 @@ function isSafeMovie(m) {
     return false;
   }
 
+  if (isKidsMode()) {
+    const g = m.genre_ids || [];
+    if (g.some((id) => KIDS_BANNED_GENRE_IDS.includes(id))) return false;
+  }
+
   const text = `
     ${m.title || ""}
     ${m.name || ""}
@@ -48,6 +76,10 @@ function isSafeMovie(m) {
   `.toLowerCase();
 
   if (loadedKeywords.some((word) => text.includes(word.toLowerCase()))) return false;
+
+  if (isKidsMode()) {
+    if (KIDS_BANNED_KEYWORDS.some((word) => text.includes(String(word).toLowerCase()))) return false;
+  }
 
   return true;
 }
@@ -196,4 +228,63 @@ export async function fetchSearchResults(query, type = "movie") {
     console.error("❌ fetchSearchResults error:", err);
     return { results: [] };
   }
+}
+
+export async function fetchPeopleSearch(query) {
+  try {
+    const cleanQuery = encodeURIComponent(query.trim());
+    if (!cleanQuery) return { results: [] };
+
+    const cacheKey = `search_person_${cleanQuery}`;
+    const cached = apiCache.get(cacheKey);
+    if (cached) return cached;
+
+    const url = `${BASE_URL}/search/person?api_key=${API_KEY}&language=ko-KR&query=${cleanQuery}&include_adult=false`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`TMDb 인물 검색 실패: ${res.status}`);
+
+    const data = await res.json();
+    data.results = (data.results || []).filter((p) => !!p?.id);
+    apiCache.set(cacheKey, data);
+    return data;
+  } catch (err) {
+    console.error("fetchPeopleSearch error:", err);
+    return { results: [] };
+  }
+}
+
+export async function fetchPersonDetail(personId) {
+  const id = Number(personId);
+  if (!Number.isFinite(id)) throw new Error("invalid person id");
+
+  const cacheKey = `person_${id}`;
+  const cached = apiCache.get(cacheKey);
+  if (cached) return cached;
+
+  const res = await fetch(
+    `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=ko-KR`
+  );
+  if (!res.ok) throw new Error("인물 정보를 불러올 수 없습니다.");
+
+  const data = await res.json();
+  apiCache.set(cacheKey, data);
+  return data;
+}
+
+export async function fetchPersonCredits(personId) {
+  const id = Number(personId);
+  if (!Number.isFinite(id)) throw new Error("invalid person id");
+
+  const cacheKey = `person_credits_${id}`;
+  const cached = apiCache.get(cacheKey);
+  if (cached) return cached;
+
+  const res = await fetch(
+    `${BASE_URL}/person/${id}/combined_credits?api_key=${API_KEY}&language=ko-KR`
+  );
+  if (!res.ok) throw new Error("출연/참여작 정보를 불러올 수 없습니다.");
+
+  const data = await res.json();
+  apiCache.set(cacheKey, data);
+  return data;
 }

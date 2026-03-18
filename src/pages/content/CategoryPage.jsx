@@ -6,7 +6,7 @@ import { MovieCardSkeleton } from "@/components/common/Skeleton";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { useToast } from "@/context/ToastContext";
-import "../../styles/common/common.css";
+import "@/styles/common/common.css";
 
 export default function CategoryPage() {
   const { type, category, genreId } = useParams();

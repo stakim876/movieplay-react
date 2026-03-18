@@ -6,6 +6,7 @@ import {
   getPersonalizedRecommendations,
   generateRecommendationReason,
 } from "@/services/recommendation";
+import { useUserFeedback } from "@/context/UserFeedbackContext";
 import "@/styles/components/components.css";
 
 const IMG_W500 = "https://image.tmdb.org/t/p/w500";
@@ -57,6 +58,7 @@ export default function TodayRecommend() {
   const [error, setError] = useState(null);
   // 관심없음 영화 ID 목록 상태 저장 (localStorage에서 초기값 로드)
   const [disliked, setDisliked] = useState(() => loadDislikedIds());
+  const { dislikedIds, toggleDislike } = useUserFeedback();
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
 
   const navigate = useNavigate();
@@ -92,7 +94,9 @@ export default function TodayRecommend() {
         }
       });
 
-      const filtered = allMovies.filter((m) => !disliked.has(m.id));
+      const filtered = allMovies.filter(
+        (m) => !disliked.has(m.id) && !dislikedIds.has(m.id)
+      );
 
       let recommendedMovies = filtered;
       if (hasData && !preferencesLoading) {
@@ -138,6 +142,9 @@ export default function TodayRecommend() {
       saveDislikedIds(next);
       return next;
     });
+    if (!dislikedIds.has(picked.id)) {
+      toggleDislike(picked.id);
+    }
 
     setMovies((prev) => prev.filter((m) => m.id !== picked.id));
   };

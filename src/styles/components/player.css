@@ -291,6 +291,112 @@
   z-index: 10003;
 }
 
+.nextup-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10003;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 2rem;
+  pointer-events: none;
+}
+
+.nextup-card {
+  pointer-events: auto;
+  width: min(360px, 92vw);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1rem 1rem 0.9rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.nextup-title {
+  color: #aefcff;
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.nextup-sub {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.nextup-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.nextup-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.nextup-btn.primary {
+  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  color: #001a1a;
+  border: none;
+}
+
+.player-help-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10004;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.player-help {
+  width: min(520px, 92vw);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem 1rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  color: #fff;
+}
+
+.player-help-title {
+  font-weight: 900;
+  color: #aefcff;
+  margin-bottom: 0.75rem;
+}
+
+.player-help-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+}
+
+.player-help-list b {
+  color: #fff;
+}
+
+.player-help-close {
+  margin-top: 0.9rem;
+  border: 1px solid rgba(0, 224, 255, 0.25);
+  background: rgba(0, 224, 255, 0.08);
+  color: #aefcff;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
 .settings-section {
   display: flex;
   flex-direction: column;
@@ -365,5 +471,11 @@
     width: 60px;
     height: 60px;
     font-size: 1.5rem;
+  }
+
+  .nextup-overlay {
+    padding: 1rem;
+    align-items: flex-end;
+    justify-content: center;
   }
 }

@@ -1,7 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useAuth } from "./AuthContext";
+import { db } from "@/services/firebase";
+import { getActiveProfileKey } from "@/utils/activeProfile";
 
 const WATCH_HISTORY_KEY = "watch_history_v1";
+const WATCH_HISTORY_REMOTE_KEY = "watchHistoryByProfile";
 const WatchHistoryContext = createContext();
 
 function loadWatchHistory() {
@@ -22,15 +26,110 @@ function saveWatchHistory(history) {
   }
 }
 
+function pruneWatchHistory(history, limit = 200) {
+  try {
+    const entries = Object.entries(history || {})
+      .map(([key, value]) => ({ key, value }))
+      .filter((x) => x?.value && typeof x.value === "object")
+      .sort((a, b) => {
+        const aT = new Date(a.value.lastWatched || 0).getTime();
+        const bT = new Date(b.value.lastWatched || 0).getTime();
+        return bT - aT;
+      })
+      .slice(0, limit);
+
+    return entries.reduce((acc, { key, value }) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+  } catch {
+    return history || {};
+  }
+}
+
 export function WatchHistoryProvider({ children }) {
   const auth = useAuth();
   const user = auth?.user || null;
   const [watchHistory, setWatchHistory] = useState(() => loadWatchHistory());
+  const [syncing, setSyncing] = useState(false);
+
+  const profileKeyRef = useRef(getActiveProfileKey());
+  const pendingSaveRef = useRef(null);
 
   useEffect(() => {
     const history = loadWatchHistory();
     setWatchHistory(history);
   }, []);
+
+  useEffect(() => {
+    profileKeyRef.current = getActiveProfileKey();
+  }, [user]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function syncFromRemote() {
+      try {
+        if (!user || !db) return;
+
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
+        if (!snap.exists()) return;
+
+        const data = snap.data() || {};
+        const profileKey = getActiveProfileKey();
+        const remote = data?.[WATCH_HISTORY_REMOTE_KEY]?.[profileKey]?.history || null;
+
+        if (!remote || typeof remote !== "object") return;
+
+        const local = loadWatchHistory();
+        // 원칙: remote를 우선 적용하되, local에만 있는 최신 항목도 합친다(면접용: 충돌 최소화)
+        const merged = pruneWatchHistory({ ...local, ...remote });
+        saveWatchHistory(merged);
+
+        if (!cancelled) setWatchHistory(merged);
+      } catch (err) {
+        console.error("시청 기록 동기화 실패:", err);
+      }
+    }
+
+    syncFromRemote();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const scheduleRemoteSave = (history) => {
+    if (!user || !db) return;
+    const profileKey = profileKeyRef.current || getActiveProfileKey();
+
+    // 빠른 timeupdate 저장을 Firestore에 다 쏘지 않도록 디바운스
+    if (pendingSaveRef.current) clearTimeout(pendingSaveRef.current);
+
+    pendingSaveRef.current = setTimeout(async () => {
+      try {
+        setSyncing(true);
+        const pruned = pruneWatchHistory(history);
+        const userRef = doc(db, "users", user.uid);
+        await setDoc(
+          userRef,
+          {
+            [WATCH_HISTORY_REMOTE_KEY]: {
+              [profileKey]: {
+                history: pruned,
+                updatedAt: new Date().toISOString(),
+              },
+            },
+          },
+          { merge: true }
+        );
+      } catch (err) {
+        console.error("시청 기록 원격 저장 실패:", err);
+      } finally {
+        setSyncing(false);
+      }
+    }, 1200);
+  };
 
   const updateWatchProgress = (movieId, progress, duration, mediaType = "movie", seasonNumber = null, episodeNumber = null) => {
     const history = loadWatchHistory();
@@ -74,6 +173,7 @@ export function WatchHistoryProvider({ children }) {
 
     saveWatchHistory(history);
     setWatchHistory({ ...history });
+    scheduleRemoteSave(history);
   };
 
   const getWatchProgress = (movieId, mediaType = "movie", seasonNumber = null, episodeNumber = null) => {
@@ -180,6 +280,7 @@ export function WatchHistoryProvider({ children }) {
         removeFromHistory,
         getWatchHistoryList,
         getWatchStats,
+        syncing,
       }}
     >
       {children}
