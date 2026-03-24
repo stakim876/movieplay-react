@@ -32,36 +32,45 @@
 }
 
 :root[data-theme="light"] {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f5f5f5;
-  --bg-tertiary: #e8e8e8;
+  /* 하얀 테마 대신 딤 라이트 (가독성·대비 확보) */
+  --bg-primary: #e5e7eb;
+  --bg-secondary: #eef0f4;
+  --bg-tertiary: #dde0e6;
   --bg-card: #ffffff;
-  --bg-overlay: rgba(255, 255, 255, 0.95);
-  --bg-input: #f9f9f9;
-  --bg-hover: rgba(0, 150, 200, 0.1);
-  --bg-active: rgba(0, 150, 200, 0.15);
 
-  --text-primary: #1a1a1a;
-  --text-secondary: #333333;
-  --text-tertiary: #666666;
-  --text-muted: rgba(0, 0, 0, 0.6);
+  --bg-overlay: linear-gradient(
+    180deg,
+    rgba(17, 17, 17, 0.92) 0%,
+    rgba(17, 17, 17, 0.72) 60%,
+    rgba(17, 17, 17, 0.35) 100%
+  );
 
-  --accent-primary: #0096c7;
-  --accent-secondary: #00b4d8;
-  --accent-tertiary: #48cae4;
-  --accent-hover: #0077b6;
+  --bg-input: #fafafa;
+  --bg-hover: rgba(0, 224, 255, 0.08);
+  --bg-active: rgba(0, 224, 255, 0.14);
 
-  --border-primary: rgba(0, 150, 200, 0.3);
-  --border-secondary: rgba(0, 180, 216, 0.3);
-  --border-hover: rgba(0, 150, 200, 0.5);
+  --text-primary: #0f1419;
+  --text-secondary: #1a1f26;
+  --text-tertiary: #374151;
+  --text-muted: rgba(15, 20, 25, 0.7);
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-  --shadow-glow: 0 0 12px rgba(0, 150, 200, 0.3);
+  /* 포인트: 민트 유지 */
+  --accent-primary: #00e0ff;
+  --accent-secondary: #2dd4bf;
+  --accent-tertiary: #8fffe3;
+  --accent-hover: #33f0ff;
 
-  --scrollbar-track: #e0e0e0;
-  --scrollbar-thumb: linear-gradient(180deg, #0096c7, #00b4d8);
+  --border-primary: rgba(15, 20, 25, 0.12);
+  --border-secondary: rgba(15, 20, 25, 0.08);
+  --border-hover: rgba(0, 224, 255, 0.42);
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.10);
+  --shadow-glow: 0 0 16px rgba(0, 224, 255, 0.18);
+
+  --scrollbar-track: #d1d5db;
+  --scrollbar-thumb: linear-gradient(180deg, #00e0ff, #2dd4bf);
 }
 
 * {
@@ -97,4 +106,455 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================================================
+   Light Mode Overrides (fixed dark values in CSS)
+   ========================================================= */
+:root[data-theme="light"] body {
+  background: var(--bg-primary) !important;
+}
+
+:root[data-theme="light"] html,
+:root[data-theme="light"] #root {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:root[data-theme="light"] .home-page,
+:root[data-theme="light"] .main-content {
+  background: transparent !important;
+}
+
+/* 라이트 모드: 제목·본문 가독성 (밝은 색 → 진한 색) */
+:root[data-theme="light"] .personalized-section .section-title,
+:root[data-theme="light"] .recommend-title,
+:root[data-theme="light"] .watch-title,
+:root[data-theme="light"] .top10-title,
+:root[data-theme="light"] .category-title,
+:root[data-theme="light"] .category-list-title,
+:root[data-theme="light"] .page-title {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+
+:root[data-theme="light"] .recommend-reason,
+:root[data-theme="light"] .recommend-slogan,
+:root[data-theme="light"] .recommend-detail,
+:root[data-theme="light"] .movie-name,
+:root[data-theme="light"] .watch-name,
+:root[data-theme="light"] .watch-progress-text,
+:root[data-theme="light"] .rec-title,
+:root[data-theme="light"] .similar-title {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+
+:root[data-theme="light"] .recommend-detail,
+:root[data-theme="light"] .watch-progress-text {
+  color: var(--text-tertiary) !important;
+}
+
+:root[data-theme="light"] .personalized-badge {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)) !important;
+  color: #0d1117 !important;
+}
+
+/* ---------- 헤더 영역 (헤더는 #111 유지, 드롭다운/알림만 라이트 톤) ---------- */
+:root[data-theme="light"] .dropdown-menu {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .dropdown-menu a {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .dropdown-menu a:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .dropdown-section {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .dropdown-menu hr {
+  border-top-color: var(--border-secondary) !important;
+}
+
+:root[data-theme="light"] .sidebar {
+  background: var(--bg-card) !important;
+  border-right-color: var(--border-primary) !important;
+}
+:root[data-theme="light"] .sidebar-item {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .sidebar-item:hover {
+  color: var(--accent-primary) !important;
+}
+
+:root[data-theme="light"] .notif-panel {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .notif-title {
+  color: var(--accent-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .notif-action {
+  border-color: rgba(0, 224, 255, 0.35) !important;
+  background: var(--bg-hover) !important;
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .notif-empty,
+:root[data-theme="light"] .notif-item-msg,
+:root[data-theme="light"] .notif-item-time {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .notif-item-title {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .notif-item:hover {
+  background: var(--bg-hover) !important;
+}
+:root[data-theme="light"] .notif-item.unread {
+  background: var(--bg-hover) !important;
+}
+
+/* ---------- 검색 페이지 ---------- */
+:root[data-theme="light"] .search-page {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .search-input {
+  background: var(--bg-input) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .search-input:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px rgba(0, 224, 255, 0.2) !important;
+}
+:root[data-theme="light"] .search-input::placeholder {
+  color: var(--text-muted) !important;
+}
+:root[data-theme="light"] .search-suggestions {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .search-tab {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .search-tab:hover {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .search-tab.active {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .filter-select,
+:root[data-theme="light"] .filter-reset-btn,
+:root[data-theme="light"] .sort-select {
+  background: var(--bg-input) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .filter-select:focus {
+  border-color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .search-results-count,
+:root[data-theme="light"] .popular-searches-title,
+:root[data-theme="light"] .search-empty-title,
+:root[data-theme="light"] .suggestion-title {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .suggestions-loading,
+:root[data-theme="light"] .suggestion-meta,
+:root[data-theme="light"] .search-empty-text,
+:root[data-theme="light"] .search-history-title {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .popular-tag,
+:root[data-theme="light"] .history-item {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .popular-tag:hover,
+:root[data-theme="light"] .history-item:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .suggestion-type {
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .person-card,
+:root[data-theme="light"] .person-title,
+:root[data-theme="light"] .person-subtitle {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .person-card:hover {
+  border-color: var(--accent-primary) !important;
+}
+
+/* ---------- 찜 목록 페이지 ---------- */
+:root[data-theme="light"] .favorites-page {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .favorites-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .favorites-action-btn {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .favorites-action-btn:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--border-hover) !important;
+}
+:root[data-theme="light"] .favorites-tab {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .favorites-tab:hover {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .favorites-tab.active {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .favorites-count {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .favorites-empty-state h2,
+:root[data-theme="light"] .favorites-empty-state p {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .favorites-empty-state p {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .favorites-card-wrapper.selected {
+  outline-color: var(--accent-primary) !important;
+}
+
+/* ---------- 로그인 / 회원가입 / Who ---------- */
+:root[data-theme="light"] .login-container,
+:root[data-theme="light"] .signup-container,
+:root[data-theme="light"] .who-container {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .login-box,
+:root[data-theme="light"] .signup-box {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .login-title,
+:root[data-theme="light"] .signup-box h2,
+:root[data-theme="light"] .who-title .highlight,
+:root[data-theme="light"] .highlight {
+  color: var(--accent-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .who-title {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .login-box input,
+:root[data-theme="light"] .signup-box input {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+:root[data-theme="light"] .login-box input::placeholder,
+:root[data-theme="light"] .signup-box input::placeholder {
+  color: var(--text-muted) !important;
+}
+:root[data-theme="light"] .signup-box input:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px rgba(0, 224, 255, 0.2) !important;
+}
+:root[data-theme="light"] .login-btn,
+:root[data-theme="light"] .signup-box button {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)) !important;
+  color: #0d1117 !important;
+}
+:root[data-theme="light"] .signup-link,
+:root[data-theme="light"] .login-link {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .signup-link a,
+:root[data-theme="light"] .login-link a {
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .profile-list p,
+:root[data-theme="light"] .profile-card p {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .profile-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+:root[data-theme="light"] .add-card {
+  border-color: var(--accent-primary) !important;
+  background: var(--bg-tertiary) !important;
+}
+:root[data-theme="light"] .add-icon {
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .manage-btn {
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .manage-btn:hover {
+  border-color: var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+}
+
+/* ---------- 에러 / 로더 ---------- */
+:root[data-theme="light"] .error-boundary {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .error-content {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .error-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: var(--accent-primary) !important;
+  color: var(--accent-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .error-message,
+:root[data-theme="light"] .error-details summary,
+:root[data-theme="light"] .error-stack {
+  color: var(--text-secondary) !important;
+}
+:root[data-theme="light"] .error-btn-secondary {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+:root[data-theme="light"] .page-loader {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .page-loader-spinner {
+  border-color: rgba(0, 224, 255, 0.25) !important;
+  border-top-color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .page-loader-text {
+  color: var(--text-tertiary) !important;
+}
+
+/* ---------- 카테고리 페이지 ---------- */
+:root[data-theme="light"] .category-page {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .loading-text,
+:root[data-theme="light"] .no-results {
+  color: var(--text-secondary) !important;
+}
+:root[data-theme="light"] .error-state {
+  color: var(--text-primary) !important;
+}
+
+/* ---------- 영화 상세 페이지 ---------- */
+:root[data-theme="light"] .movie-detail {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .movie-detail-backdrop .backdrop-image {
+  opacity: 0.35;
+}
+:root[data-theme="light"] .movie-detail-backdrop .backdrop-gradient {
+  background: linear-gradient(to top, var(--bg-primary) 0%, transparent 100%) !important;
+}
+:root[data-theme="light"] .movie-detail-content {
+  background: linear-gradient(to bottom, transparent 0%, var(--bg-primary) 200px) !important;
+}
+:root[data-theme="light"] .movie-detail-content,
+:root[data-theme="light"] .detail-info h1,
+:root[data-theme="light"] .overview,
+:root[data-theme="light"] .detail-cast h2,
+:root[data-theme="light"] .detail-trailer h2,
+:root[data-theme="light"] .detail-recommend h2,
+:root[data-theme="light"] .detail-similar h2 {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .detail-info .overview {
+  color: var(--text-secondary) !important;
+}
+:root[data-theme="light"] .character,
+:root[data-theme="light"] .rec-title,
+:root[data-theme="light"] .similar-title {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .cast-card {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .actor-name {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .recommend-card,
+:root[data-theme="light"] .similar-card {
+  background: var(--bg-tertiary) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* ---------- 프로필 페이지 ---------- */
+:root[data-theme="light"] .profile-page-container {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .profile-title {
+  color: var(--accent-primary) !important;
+  text-shadow: none !important;
+}
+:root[data-theme="light"] .profile-box-large {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+:root[data-theme="light"] .profile-manage-box {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--border-primary) !important;
+}
+:root[data-theme="light"] .profile-manage-title {
+  color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .profile-manage-sub {
+  color: var(--text-tertiary) !important;
+}
+:root[data-theme="light"] .profile-manage-item {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+}
+:root[data-theme="light"] .profile-manage-name {
+  color: var(--text-primary) !important;
+}
+:root[data-theme="light"] .profile-name,
+:root[data-theme="light"] .home-btn {
+  color: var(--text-primary) !important;
+  border-color: var(--accent-primary) !important;
+}
+:root[data-theme="light"] .home-btn:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
