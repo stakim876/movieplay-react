@@ -1,82 +1,84 @@
-# movieplay-react
+# MoviePlay React
 
-영화 사이트 비슷하게 만들어 본 거. 데이터는 TMDB에서 긁어오고 로그인이랑 db는 firebase 씀. 구독 쪽은 토스 위젯 붙여 놨는데 그냥 UI 연습 수준이라 실제로 결제 다 되는 서비스는 아님.
+MoviePlay React는 제가 혼자 개발한 영화 스트리밍 웹 애플리케이션입니다.  
+TMDB API와 Firebase를 사용했고, 기능을 많이 붙이는 것보다 "사용자가 실제로 쓰는 흐름"을 만드는 데 집중했습니다.
 
-배포는 안 해둠. 링크 없고 클론해서 로컬로만 보면 됨.
+이 프로젝트에서 제가 중요하게 본 기준은 아래 3가지입니다.
+- 로그인 이후 흐름이 끊기지 않을 것
+- 키즈/일반 사용자 기준으로 콘텐츠 노출이 안전할 것
+- 운영 중 화면 구성을 바꿀 때 코드 수정 비용이 크지 않을 것
 
-내가 여기서 직접 맞춰 둔 쪽은 대충 이런 거다. PrivateRoute로 로그인 안 한 사람 메인 화면 라우트 막은 거, TMDB에서 온 데이터에 성인·금칙어·키즈 모드 필터 걸어 둔 거, Firestore Config로 홈에 뭐 뜰지랑 네비 일부 바꿀 수 있게 해 둔 거, 구독 페이지에서 토스 위젯이랑 success fail URL까지 이어지는 흐름. 유저 쪽 상태는 Context 여러 개로 나눠 둠.
+## 주요 기능
 
-연습 프로젝트라 토스 시크릿 키 프론트에 둔 거랑 /admin 은 거의 껍데기만 있는 건 그냥 둠. 실서비스면 결제 검증이랑 시크릿은 서버에서 해야 한다는 건 알고 있음. env 쪽에도 한 번 더 적어 둠.
+- 사용자 인증 및 접근 제어 (`PrivateRoute`)
+- 영화/TV 콘텐츠 조회 (`TMDB API`)
+- 키즈 모드 및 성인/금칙어 콘텐츠 필터링
+- 찜, 시청 기록, 좋아요, 알림 기능
+- 시청 이력 기반 개인화 추천
+- 구독 및 결제 UI 흐름 (`Toss Payments Widget`)
+- Lazy Loading + Skeleton UI
 
-react vite router. css는 src/styles 아래에 쪼개 둠. helmet이랑 firebase, 아이콘은 react-icons. 결제 sdk 이름은 package.json 보면 나옴 @tosspayments/payment-widget-sdk.
+## 구현 포인트
 
-import 할 때 @ 쓰는 건 vite.config.js에 alias 해 둠.
+### 1) 콘텐츠 필터링
 
-홈에 뭐 나오냐면 ConfigContext가 firestore에서 navigation이랑 homeGenres 같은 거 가져옴. 로딩 중이면 스켈레톤 여러 개 뜸. 순서는 FeaturedHero, CategoryCards, TodayTop10, WatchAgain, MyListRow, TodayRecommend, PersonalizedSection 두 개 제목만 다르고 endpoint는 코드에 박아 둔 거, 그 다음 movieCategories tvCategories 돌면서 CategoryGrid, homeGenres 돌면서 CategoryGrid.
+외부 API를 쓰다 보니 성인 콘텐츠나 부적절한 텍스트가 섞여 들어오는 케이스가 있었습니다.  
+그래서 단일 조건이 아니라 성인 여부, 금칙어, 키즈 모드 설정을 같이 보는 방식으로 필터를 설계했습니다.
 
-상세는 movie tv 같이 쓰고 url로 구분. 성인이거나 금칙어 걸리면 막음. 키즈 모드도 있음 프로필 설정이랑 엮여 있음. TMDB 쓸 때 약관은 지켜야 함 https://www.themoviedb.org/documentation/api/terms-of-use
+- 사용자 프로필(키즈/일반)에 따라 노출 기준 분리
+- 목록/상세 진입 시점 모두 필터 적용
+- 우회 노출이 생기지 않도록 화면별 예외를 최소화
 
-검색은 debounce랑 SearchSuggestions. 플레이어는 상세 불러온 다음 VideoPlayer. 찜 시청기록 댓글 좋아요 알림 이런 거 Context랑 firestore에 흩어져 있음.
+### 2) 화면 구성의 운영 유연성
 
-처음에 스플래시 뜨고 ErrorBoundary 있음. 페이지는 lazy suspense 쓰면 PageLoader 나옴.
+홈을 포함한 일부 화면은 Config 기반으로 동작하게 구성했습니다.  
+이렇게 하면 섹션 순서나 노출 여부를 바꿀 때 매번 코드를 수정하지 않아도 됩니다.
 
-## 페이지 경로
+- 코드 수정/재배포 없이 일부 구성 변경 가능
+- 설정 실패 시 폴백으로 서비스 흐름 유지
 
-로그인 안 해도 됨 /login /signup
+### 3) 인증 이후 사용자 경험 분리
 
-로그인 해야 함 / /search /movie/:id /tv/:id /person/:id /category/... /discover /new-hot /favorites /player /player/:id /player/:type/:id /profile /who /subscription /subscription/payment/success /subscription/payment/fail
+계정 단위 인증과 시청 경험 단위를 분리하기 위해 로그인 후 프로필 선택 단계를 두었습니다.  
+가족이 함께 쓰는 상황을 기준으로 잡아서, 기록/추천/필터 기준이 섞이지 않게 프로필 단위로 관리했습니다.
 
-헤더 사이드바 있는 레이아웃은 로그인 회원가입 구독 who 프로필 빼고 들어가게 해 둔 걸로 기억함. 아니면 App.jsx에서 MainLayout 씌인 부분만 보면 됨.
+- 비인증 사용자 접근 제한
+- 프로필별 시청 경험 분리
 
-admin은 admin일 때만 /admin 근데 안은 거의 비어 있음
+### 4) 결제 흐름 구현 (프론트 기준)
 
-이상한 주소면 /로 튕김
+`Toss Payments Widget`을 사용해 결제 UI와 success/fail URL 흐름을 구현했습니다.  
+프론트에서는 사용자 결제 경험과 상태 전환 흐름을 담당하고, 검증은 서버에서 해야 한다는 경계를 두고 작업했습니다.
 
-Provider는 맨 밖에 Theme Auth WatchHistory 그 안 AppContent에서 Toast가 제일 바깥이고 그 안에 Config Subscription Movie Favorites UserFeedback Notifications 순. main.jsx는 HelmetProvider랑 Router만 있음. 까먹으면 파일 열어보는 게 나음
+- 결제 성공/실패 사용자 흐름 분기
+- 구독 상태 반영까지 이어지는 화면 흐름 구성
 
-## 폴더
+> 실제 운영 환경에서는 결제 승인 검증과 시크릿 키 처리를 반드시 서버에서 수행해야 합니다.
 
-components layout home category search player subscription common 잡다한 거
+## 기술 스택
 
-pages context services tmdb firebase payment subscription recommendation storage firestore 쪽 파일들 hooks utils constants
+- Frontend: React (Vite), React Router
+- State Management: Context API
+- Backend (BaaS): Firebase (Auth, Firestore)
+- API: TMDB API
+- Payment: Toss Payments Widget
 
-## 돌리는 법
+## 개선 예정 사항
 
+- 결제 검증 로직 서버 사이드 이전
+- 시크릿 키 보안 처리 강화
+- 관리자 기능 확장
+- 추천 알고리즘 고도화
+- 테스트 코드(핵심 플로우 중심) 보강
+
+## 실행 방법
+
+```bash
 npm install
 npm run dev
-
-빌드 npm run build 미리보기 npm run preview node 18 이상이면 될 듯
-
-## env
-
-.env 만들고 깃에 올리지 말 것
-
-```
-VITE_TMDB_API_KEY=
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-VITE_FIREBASE_MEASUREMENT_ID=
-VITE_TOSS_CLIENT_KEY=
-VITE_TOSS_SECRET_KEY=
 ```
 
-firestore.rules 보고 콘솔이랑 맞춰서 배포
+## Author
 
-시크릿 키 프론트에 두면 안 되는 거 알고 있음 연습이라 이렇게 해 둔 거고 실서비스면 서버에서 해야 함
-
-## 클론
-
-```
-git clone https://github.com/stakim876/movieplay-react.git
-cd movieplay-react
-npm install
-npm run dev
-```
-
-Seungtae Kim
-https://github.com/stakim876
-
+Seungtae Kim  
+[https://github.com/stakim876](https://github.com/stakim876)
