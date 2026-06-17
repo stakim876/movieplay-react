@@ -255,7 +255,7 @@
 }
 
 .hs-btn.disabled {
-  opacity: 0.8; /* disabled여도 '존재'는 보이게 */
+  opacity: 0.8;
   cursor: default;
 }
 

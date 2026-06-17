@@ -32,7 +32,6 @@
 }
 
 :root[data-theme="light"] {
-  /* 하얀 테마 대신 딤 라이트 (가독성·대비 확보) */
   --bg-primary: #e5e7eb;
   --bg-secondary: #eef0f4;
   --bg-tertiary: #dde0e6;
@@ -54,7 +53,6 @@
   --text-tertiary: #374151;
   --text-muted: rgba(15, 20, 25, 0.7);
 
-  /* 포인트: 민트 유지 */
   --accent-primary: #00e0ff;
   --accent-secondary: #2dd4bf;
   --accent-tertiary: #8fffe3;
@@ -108,9 +106,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* =========================================================
-   Light Mode Overrides (fixed dark values in CSS)
-   ========================================================= */
 :root[data-theme="light"] body {
   background: var(--bg-primary) !important;
 }
@@ -126,7 +121,6 @@ body {
   background: transparent !important;
 }
 
-/* 라이트 모드: 제목·본문 가독성 (밝은 색 → 진한 색) */
 :root[data-theme="light"] .personalized-section .section-title,
 :root[data-theme="light"] .recommend-title,
 :root[data-theme="light"] .watch-title,
@@ -160,7 +154,6 @@ body {
   color: #0d1117 !important;
 }
 
-/* ---------- 헤더 영역 (헤더는 #111 유지, 드롭다운/알림만 라이트 톤) ---------- */
 :root[data-theme="light"] .dropdown-menu {
   background: var(--bg-card) !important;
   border-color: var(--border-primary) !important;
@@ -221,7 +214,6 @@ body {
   background: var(--bg-hover) !important;
 }
 
-/* ---------- 검색 페이지 ---------- */
 :root[data-theme="light"] .search-page {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
@@ -301,7 +293,6 @@ body {
   border-color: var(--accent-primary) !important;
 }
 
-/* ---------- 찜 목록 페이지 ---------- */
 :root[data-theme="light"] .favorites-page {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
@@ -346,7 +337,6 @@ body {
   outline-color: var(--accent-primary) !important;
 }
 
-/* ---------- 로그인 / 회원가입 / Who ---------- */
 :root[data-theme="light"] .login-container,
 :root[data-theme="light"] .signup-container,
 :root[data-theme="light"] .who-container {
@@ -422,7 +412,6 @@ body {
   color: var(--accent-primary) !important;
 }
 
-/* ---------- 에러 / 로더 ---------- */
 :root[data-theme="light"] .error-boundary {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
@@ -460,7 +449,6 @@ body {
   color: var(--text-tertiary) !important;
 }
 
-/* ---------- 카테고리 페이지 ---------- */
 :root[data-theme="light"] .category-page {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
@@ -473,7 +461,6 @@ body {
   color: var(--text-primary) !important;
 }
 
-/* ---------- 영화 상세 페이지 ---------- */
 :root[data-theme="light"] .movie-detail {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
@@ -518,7 +505,6 @@ body {
   box-shadow: var(--shadow-sm) !important;
 }
 
-/* ---------- 프로필 페이지 ---------- */
 :root[data-theme="light"] .profile-page-container {
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
