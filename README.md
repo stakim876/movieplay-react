@@ -1,35 +1,32 @@
 # MoviePlay React
 
-TMDB + Firebase로 만든 영화/TV 탐색 웹앱입니다.  
-로그인 → 프로필 선택 → 홈에서 추천·이어보기·탐색까지 이어지는 **시청 경험**을 구현했습니다.
+TMDB API로 영화/TV 데이터 가져오고, 로그인·DB는 Firebase 씀.  
+넷플릭스 비슷하게 생겼지만 그냥 UI 따라한 게 전부는 아니고, 프로필 나누기·키즈 필터·시청 기록 기반 추천 쪽에 좀 더 신경 썼음.
 
-**포커스:** 가족 프로필 · 키즈 안전 필터 · 시청 이력 기반 추천 · 설명 가능한 추천 이유
-
-## Quick Start
+## 실행
 
 ```bash
 npm install
 npm run dev
 ```
 
-Node.js 18+
-
-## Scripts
+node 18 이상이면 될 듯
 
 ```bash
-npm run dev         # 개발 서버
-npm run typecheck   # TypeScript 검사
-npm run test        # Vitest
-npm run build       # 프로덕션 빌드
+npm run typecheck
+npm run test
+npm run build
 ```
 
-## Tech Stack
+## 쓴 것
 
-React · TypeScript · Vite · React Router · Zustand · Firebase (Auth, Firestore) · TMDB API · Toss Payments Widget · Vitest · GitHub Actions
+react, vite, typescript, react-router, zustand, firebase(auth/firestore), tmdb api, 토스 결제 위젯, vitest, github actions
 
-## Environment
+import `@/` 쓰는 건 vite.config.ts에 alias 해둠
 
-프로젝트 루트에 `.env` 파일 생성 (Git에 커밋하지 않음)
+## env
+
+루트에 `.env` 만들기. **깃에 올리면 안 됨**
 
 ```env
 VITE_TMDB_API_KEY=
@@ -43,12 +40,9 @@ VITE_FIREBASE_MEASUREMENT_ID=
 VITE_TOSS_CLIENT_KEY=
 ```
 
-Firestore 보안 규칙: `firestore.rules` 참고
+firestore.rules 파일 있으니까 firebase 콘솔이랑 맞춰서 배포해야 함
 
-## Interview Prep
+---
 
-면접에서 말할 내용(Q&A, 기술 이슈, 차별점)은 **[docs/INTERVIEW.md](./docs/INTERVIEW.md)** 에 정리해 두었습니다.
-
-## Author
-
-Seungtae Kim · [GitHub](https://github.com/stakim876)
+Seungtae Kim  
+https://github.com/stakim876
