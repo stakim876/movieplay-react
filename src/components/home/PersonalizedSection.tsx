@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchMovies } from "@/services/tmdb";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import {
   getGenreBasedRecommendations,
   getPersonalizedRecommendations,
+  generateRecommendationReason,
 } from "@/services/recommendation";
 import MovieCard from "@/components/category/cards/MovieCard";
 import { MovieCardSkeleton } from "@/components/common/Skeleton";
@@ -12,21 +12,19 @@ import { useUserFeedback } from "@/stores/userFeedbackStore";
 import "@/styles/components/components.css";
 
 export default function PersonalizedSection({ title, endpoint }) {
-  // 영화 데이터 상태 저장
   const [movies, setMovies] = useState<any[]>([]);
-  // 로딩 상태 저장
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
   const { dislikedIds } = useUserFeedback();
-  const navigate = useNavigate();
 
-  // endpoint/취향 로딩 완료 시 영화 데이터 가져오기
   useEffect(() => {
     const loadMovies = async () => {
       if (preferencesLoading) return;
 
       try {
         setLoading(true);
+        setError(false);
         const res = await fetchMovies(endpoint);
         const allMovies = (res?.results || []).filter((m) => !dislikedIds.has(m.id));
 
@@ -52,13 +50,14 @@ export default function PersonalizedSection({ title, endpoint }) {
       } catch (err) {
         console.error("개인화 섹션 로드 실패:", err);
         setMovies([]);
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
     loadMovies();
-  }, [endpoint, preferencesLoading, hasData, preferences, title]);
+  }, [endpoint, preferencesLoading, hasData, preferences, title, dislikedIds]);
 
   if (loading || preferencesLoading) {
     return (
@@ -69,6 +68,15 @@ export default function PersonalizedSection({ title, endpoint }) {
             <MovieCardSkeleton key={i} />
           ))}
         </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="personalized-section">
+        <h2 className="section-title">{title}</h2>
+        <p className="section-empty-message">맞춤 추천을 불러오지 못했어요.</p>
       </section>
     );
   }
@@ -85,7 +93,15 @@ export default function PersonalizedSection({ title, endpoint }) {
       </h2>
       <div className="movie-row fade-in">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            recommendationReason={
+              hasData
+                ? generateRecommendationReason(movie, preferences)
+                : undefined
+            }
+          />
         ))}
       </div>
     </section>

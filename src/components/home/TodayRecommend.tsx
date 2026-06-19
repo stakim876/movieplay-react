@@ -7,6 +7,8 @@ import {
   generateRecommendationReason,
 } from "@/services/recommendation";
 import { useUserFeedback } from "@/stores/userFeedbackStore";
+import { useToast } from "@/stores/toastStore";
+import { getActiveProfileDisplayName } from "@/utils/activeProfile";
 import "@/styles/components/components.css";
 
 const IMG_W500 = "https://image.tmdb.org/t/p/w500";
@@ -60,6 +62,8 @@ export default function TodayRecommend() {
   const [disliked, setDisliked] = useState(() => loadDislikedIds());
   const { dislikedIds, toggleDislike } = useUserFeedback();
   const { preferences, loading: preferencesLoading, hasData } = useUserPreferences();
+  const { info } = useToast();
+  const profileName = getActiveProfileDisplayName();
 
   const navigate = useNavigate();
 
@@ -146,6 +150,7 @@ export default function TodayRecommend() {
       toggleDislike(picked.id);
     }
 
+    info("비슷한 추천에서 제외했어요");
     setMovies((prev) => prev.filter((m) => m.id !== picked.id));
   };
 
@@ -162,7 +167,7 @@ export default function TodayRecommend() {
 
   return (
     <section className="today-recommend">
-      <h2 className="recommend-title">🎬 오늘 이거 하나</h2>
+      <h2 className="recommend-title">🎬 {profileName}님, 오늘 이거 하나</h2>
 
       {loading && (
         <p className="recommend-reason">추천작을 고르는 중이에요…</p>

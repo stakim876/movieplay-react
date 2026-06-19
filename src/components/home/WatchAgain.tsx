@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWatchHistory } from "@/stores/watchHistoryStore";
+import { getActiveProfileDisplayName } from "@/utils/activeProfile";
 import { fetchMovieDetail } from "@/services/tmdb";
 import { FaPlay, FaCheckCircle } from "react-icons/fa";
 import HorizontalScroller from "@/components/common/HorizontalScroller";
@@ -12,6 +13,7 @@ export default function WatchAgain() {
   const [filter, setFilter] = useState("in_progress");
   const navigate = useNavigate();
   const { getWatchHistoryList, getWatchProgress } = useWatchHistory();
+  const profileName = getActiveProfileDisplayName();
 
   useEffect(() => {
     async function loadWatchAgain() {
@@ -74,7 +76,7 @@ export default function WatchAgain() {
   if (loading) {
     return (
       <section className="watch-again">
-        <h2 className="watch-title">📺 계속 보기</h2>
+        <h2 className="watch-title">📺 {profileName}님, 이어서 볼까요?</h2>
         <p style={{ color: "#fff", padding: "1rem" }}>로딩 중...</p>
       </section>
     );
@@ -87,7 +89,7 @@ export default function WatchAgain() {
   return (
     <section className="watch-again">
       <div className="watch-again-header">
-        <h2 className="watch-title">📺 계속 보기</h2>
+        <h2 className="watch-title">📺 {profileName}님, 이어서 볼까요?</h2>
         <div className="watch-filters">
           <button
             className={`watch-filter-btn ${filter === "in_progress" ? "active" : ""}`}

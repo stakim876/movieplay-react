@@ -11,3 +11,19 @@ export function getActiveProfileKey() {
   return "default";
 }
 
+export function getActiveProfileDisplayName() {
+  const key = getActiveProfileKey();
+  return key === "default" ? "프로필" : key;
+}
+
+export function isKidsProfileActive() {
+  try {
+    const key = getActiveProfileKey();
+    const raw = localStorage.getItem("mp_profile_settings_v1");
+    const parsed = raw ? JSON.parse(raw) : {};
+    return !!parsed?.[key]?.kids;
+  } catch {
+    return false;
+  }
+}
+

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useConfig } from "@/stores/configStore";
+import { getActiveProfileDisplayName, isKidsProfileActive } from "@/utils/activeProfile";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import "@/styles/common/common.css";
 import FeaturedHero from "@/components/home/FeaturedHero";
@@ -28,9 +29,20 @@ export default function HomePage() {
     return homeGenres || [];
   }, [homeGenres]);
 
+  const profileName = getActiveProfileDisplayName();
+  const kidsMode = isKidsProfileActive();
+
   return (
     <ErrorBoundary showDetails={import.meta.env.DEV}>
       <div className="home-page">
+        <div className="home-greeting">
+          <h1 className="home-greeting-title">{profileName}님, 오늘 뭐 볼까요?</h1>
+          {kidsMode && (
+            <p className="home-kids-notice">
+              키즈 프로필 — 안전한 콘텐츠만 보여드려요
+            </p>
+          )}
+        </div>
         <FeaturedHero />
 
         {loading ? (

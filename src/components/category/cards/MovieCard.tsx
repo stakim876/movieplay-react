@@ -4,15 +4,17 @@ import { FaPlay, FaInfoCircle, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import LikeButton from "@/components/common/LikeButton";
 import { useUserFeedback } from "@/stores/userFeedbackStore";
 import { useWatchHistory } from "@/stores/watchHistoryStore";
+import { useToast } from "@/stores/toastStore";
 import "@/styles/components/components.css";
 
 const fallbackImage = "https://placehold.co/300x450?text=No+Image&font=roboto";
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, recommendationReason = undefined }) {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const { likedIds, dislikedIds, toggleLike, toggleDislike } = useUserFeedback();
   const { getWatchProgress } = useWatchHistory();
+  const { info } = useToast();
 
   const imageUrl = useMemo(() => {
     return movie.poster_path || movie.backdrop_path
@@ -75,6 +77,9 @@ export default function MovieCard({ movie }) {
       <div className={`movie-card-overlay ${isHovered ? "hovered" : ""}`}>
         <div className="movie-card-info">
           <h3 className="movie-card-title">{movie.title || movie.name}</h3>
+          {recommendationReason && (
+            <p className="movie-card-reason">{recommendationReason}</p>
+          )}
           {movie.vote_average > 0 && (
             <p className="movie-card-rating">⭐ {movie.vote_average.toFixed(1)}</p>
           )}
@@ -111,7 +116,11 @@ export default function MovieCard({ movie }) {
             className={`feedback-btn dislike ${dislikedIds.has(movie.id) ? "active" : ""}`.trim()}
             onClick={(e) => {
               e.stopPropagation();
+              const wasDisliked = dislikedIds.has(movie.id);
               toggleDislike(movie.id);
+              if (!wasDisliked) {
+                info("비슷한 추천에서 제외했어요");
+              }
             }}
             title="관심 없음"
             aria-label="관심 없음"

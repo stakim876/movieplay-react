@@ -46,6 +46,50 @@
   padding: 0 2rem;
 }
 
+.home-greeting {
+  padding: 1.5rem 2rem 0;
+}
+
+.home-greeting-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.home-kids-notice {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #8fffe3;
+}
+
+.section-empty-message {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+}
+
+.movie-card-reason {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.85);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .home-greeting {
+    padding: 1rem 1rem 0;
+  }
+
+  .home-greeting-title {
+    font-size: 1.35rem;
+  }
+}
+
 .personalized-section .section-title {
   font-size: 1.5rem;
   font-weight: 700;
