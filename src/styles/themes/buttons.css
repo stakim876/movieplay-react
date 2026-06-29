@@ -1,0 +1,341 @@
+/**
+ * Streaming UI button system
+ * Netflix / Disney+ 패턴: 흰색 재생 · 회색 보조 · 아이콘 원형 · 고스트 아웃라인
+ */
+
+/* ── Base ── */
+.hero-play-btn,
+.detail-play-btn,
+.hero-info-btn,
+.detail-info-btn,
+.login-btn,
+.signup-box button,
+.auth-button,
+.logout-btn,
+.manage-btn,
+.home-btn,
+.error-btn,
+.btn-plan,
+.watch-play-btn,
+.like-btn,
+.recommend-refresh,
+.recommend-dislike,
+.favorites-action-btn,
+.payment-modal-footer button {
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.hero-play-btn:focus-visible,
+.detail-play-btn:focus-visible,
+.hero-info-btn:focus-visible,
+.login-btn:focus-visible,
+.logout-btn:focus-visible,
+.error-btn:focus-visible,
+.btn-plan:focus-visible,
+.like-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--btn-focus-ring);
+}
+
+.hero-play-btn:disabled,
+.detail-play-btn:disabled,
+.login-btn:disabled,
+.btn-plan:disabled,
+.error-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ── Primary: 재생 / 로그인 / 구독 CTA ── */
+.hero-play-btn,
+.detail-play-btn,
+.login-btn,
+.signup-box button,
+.auth-button,
+.error-btn-primary,
+.btn-plan.upgrade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: var(--btn-height-md);
+  padding: 0.65rem var(--btn-padding-x-lg);
+  border: none;
+  border-radius: var(--btn-radius);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-size: var(--btn-font-size);
+  font-weight: var(--btn-font-weight);
+}
+
+.hero-play-btn:hover,
+.detail-play-btn:hover,
+.login-btn:hover,
+.signup-box button:hover,
+.auth-button:hover:not(:disabled),
+.error-btn-primary:hover,
+.btn-plan.upgrade:hover {
+  background: var(--btn-primary-hover);
+}
+
+.hero-play-btn:active,
+.detail-play-btn:active,
+.login-btn:active,
+.btn-plan.upgrade:active {
+  opacity: 0.92;
+}
+
+.hero-play-btn svg,
+.detail-play-btn svg {
+  font-size: 0.85em;
+}
+
+/* 히어로: 스트리밍 표준 크기 */
+.hero-play-btn,
+.hero-info-btn {
+  min-height: var(--btn-height-lg);
+  padding: 0.7rem var(--btn-padding-x-lg);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+/* 로그인·회원가입: 풀 너비 */
+.login-btn,
+.signup-box button,
+.auth-button {
+  width: 100%;
+  padding: 0.75rem var(--btn-padding-x);
+}
+
+/* ── Secondary: 상세 정보 / 보조 액션 ── */
+.hero-info-btn,
+.detail-info-btn,
+.error-btn-secondary,
+.btn-plan.subscribe {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: var(--btn-height-md);
+  padding: 0.65rem var(--btn-padding-x-lg);
+  border: none;
+  border-radius: var(--btn-radius);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-fg);
+  font-size: var(--btn-font-size);
+  font-weight: var(--btn-font-weight);
+  backdrop-filter: blur(10px);
+}
+
+.hero-info-btn:hover,
+.detail-info-btn:hover,
+.error-btn-secondary:hover,
+.btn-plan.subscribe:hover {
+  background: var(--btn-secondary-hover);
+}
+
+.hero-info-btn svg {
+  font-size: 0.9em;
+}
+
+/* ── Ghost: 로그아웃 / 프로필 관리 ── */
+.logout-btn,
+.manage-btn,
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: var(--btn-height-sm);
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--btn-ghost-border);
+  border-radius: var(--btn-radius);
+  background: transparent;
+  color: var(--btn-ghost-fg);
+  font-size: 0.875rem;
+  font-weight: var(--btn-font-weight);
+}
+
+.logout-btn:hover,
+.manage-btn:hover,
+.home-btn:hover {
+  background: var(--btn-ghost-hover-bg);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Icon round: 찜 / 카드 재생 ── */
+.like-btn {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+  min-height: var(--btn-icon-size);
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(42, 42, 42, 0.6);
+  color: #fff;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.like-btn:hover {
+  background: rgba(42, 42, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.like-btn.liked {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.detail-actions .like-btn {
+  width: var(--btn-height-md);
+  height: var(--btn-height-md);
+  min-height: var(--btn-height-md);
+}
+
+.watch-play-btn {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+
+.watch-card:hover .watch-play-btn {
+  background: #fff;
+  color: #141414;
+  border-color: #fff;
+}
+
+/* ── Error actions ── */
+.error-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+/* ── 구독 플랜 ── */
+.btn-plan {
+  width: 100%;
+  margin-top: auto;
+}
+
+.btn-plan.subscribe {
+  font-weight: 700;
+}
+
+.btn-plan.upgrade {
+  font-weight: 700;
+}
+
+.recommend-refresh,
+.recommend-dislike,
+.favorites-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--btn-height-sm);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--btn-radius);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.recommend-refresh:hover,
+.favorites-action-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--text-primary);
+}
+
+.favorites-action-btn.delete-btn {
+  background: rgba(220, 60, 60, 0.15);
+  border-color: rgba(220, 60, 60, 0.35);
+  color: #ff8a8a;
+}
+
+.favorites-action-btn.delete-btn:hover:not(:disabled) {
+  background: rgba(220, 60, 60, 0.22);
+  border-color: rgba(220, 60, 60, 0.5);
+  color: #ffb4b4;
+}
+
+.recommend-dislike:hover {
+  background: rgba(255, 100, 100, 0.12);
+  border-color: rgba(255, 100, 100, 0.35);
+  color: #ff8a8a;
+}
+
+/* ── 결제 모달 ── */
+.payment-modal-footer .btn-cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--btn-radius);
+  font-weight: var(--btn-font-weight);
+}
+
+.payment-modal-footer .btn-cancel:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.payment-modal-footer .btn-pay {
+  background: #141414;
+  color: #fff;
+  border: none;
+  border-radius: var(--btn-radius);
+  font-weight: var(--btn-font-weight);
+}
+
+.payment-modal-footer .btn-pay:hover:not(:disabled) {
+  background: #2a2a2a;
+}
+
+/* ── 히어로 버튼 그룹 ── */
+.hero-buttons,
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .hero-play-btn,
+  .hero-info-btn {
+    min-height: var(--btn-height-md);
+    padding: 0.6rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .error-btn {
+    width: 100%;
+  }
+}

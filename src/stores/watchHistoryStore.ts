@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { getActiveProfileKey } from "@/utils/activeProfile";
+import { db } from "@/core/firebase";
+import { getActiveProfileKey } from "@/shared/lib/activeProfile";
 import { useAuthStore } from "@/stores/authStore";
 
 const WATCH_HISTORY_KEY = "watch_history_v1";
@@ -80,6 +80,9 @@ interface WatchHistoryState {
 let profileKeyRef = getActiveProfileKey();
 let pendingSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
+// [면접] 시청 기록을 Firestore에 바로 안 쓰고 1.2초 모아서 한 번에 저장
+// → 재생 중 timeupdate가 초당 여러 번 와서, 매번 쓰면 비용·속도 문제
+// → localStorage는 즉시 저장 → "이어보기"는 바로 됨 (로컬 우선)
 function scheduleRemoteSave(history: Record<string, any>) {
   const user = useAuthStore.getState().user;
   if (!user || !db) return;
@@ -102,6 +105,7 @@ function scheduleRemoteSave(history: Record<string, any>) {
             },
           },
         },
+        // merge: true = 유저 문서 전체를 덮어쓰지 않고 watchHistory 필드만 합침
         { merge: true }
       );
     } catch (err) {
@@ -279,6 +283,7 @@ async function syncWatchHistoryFromRemote(user: { uid: string }) {
     if (!remote || typeof remote !== "object") return;
 
     const local = loadWatchHistory();
+    // 로그인 시 로컬 + 서버 기록 합침 (같은 키면 서버 값이 덮어씀)
     const merged = pruneWatchHistory({ ...local, ...remote });
     saveWatchHistory(merged);
     useWatchHistoryStore.setState({ watchHistory: merged });

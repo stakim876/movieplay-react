@@ -1,0 +1,101 @@
+.playback-scope-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  max-width: 420px;
+}
+
+.playback-scope-notice.compact {
+  padding: 0.45rem 0.65rem;
+  max-width: 360px;
+}
+
+.playback-scope-badge {
+  flex-shrink: 0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a1408;
+  background: linear-gradient(135deg, var(--accent-tertiary) 0%, var(--accent-primary) 100%);
+}
+
+.playback-scope-text {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.player-scope-notice {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 6.5rem;
+  z-index: 10003;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .player-scope-notice {
+    left: 1rem;
+    right: 1rem;
+    bottom: 5.5rem;
+  }
+
+  .playback-scope-notice {
+    max-width: none;
+  }
+}
+
+/* 홈 — 프로젝트 포지셔닝 배너 */
+.project-charter {
+  margin: 0 2rem 1.25rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-charter-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+}
+
+.project-charter-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.project-charter-list {
+  margin: 0 0 0.65rem;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.project-charter-foot {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .project-charter {
+    margin: 0 1rem 1rem;
+  }
+}

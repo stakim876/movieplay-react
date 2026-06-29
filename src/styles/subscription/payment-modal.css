@@ -67,6 +67,19 @@
   box-sizing: border-box;
 }
 
+.payment-demo-notice {
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #4b5563;
+  box-sizing: border-box;
+}
+
 .payment-summary {
   background: #f9fafb;
   border-radius: 8px;
@@ -166,32 +179,7 @@
 .payment-modal-footer button {
   flex: 1;
   padding: 0.875rem 1.5rem;
-  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.btn-cancel {
-  background: #f3f4f6;
-  color: #374151;
-}
-
-.btn-cancel:hover:not(:disabled) {
-  background: #e5e7eb;
-}
-
-.btn-pay {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.btn-pay:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .btn-pay:disabled,

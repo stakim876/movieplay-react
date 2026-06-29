@@ -8,5 +8,5 @@ export { useSubscription, useSubscriptionStore } from "@/stores/subscriptionStor
 export { useWatchHistory, useWatchHistoryStore } from "@/stores/watchHistoryStore";
 export { useUserFeedback, useUserFeedbackStore } from "@/stores/userFeedbackStore";
 export { useNotifications, useNotificationsStore } from "@/stores/notificationsStore";
-export { StoreBootstrap } from "@/stores/StoreBootstrap";
-export { bootstrapStores } from "@/stores/initStores";
+export { StoreBootstrap } from "@/app/providers/StoreBootstrap";
+export { bootstrapStores } from "@/app/providers/initStores";

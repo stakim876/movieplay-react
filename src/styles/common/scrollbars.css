@@ -1,0 +1,97 @@
+/**
+ * OTT-style scrollbars — thin overlay on vertical scroll,
+ * hidden on horizontal carousels (see .hs--netflix).
+ */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-solid) var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-solid);
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+html:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-hover);
+}
+
+html::-webkit-scrollbar-thumb:active {
+  background: var(--accent-primary);
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Nested scroll panels (modals, suggestions, side panels) */
+.scroll-panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-solid) transparent;
+}
+
+.scroll-panel::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scroll-panel::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-solid);
+  border-radius: var(--radius-pill);
+}
+
+.scroll-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Horizontal content rows — slim branded bar when scrollbar is visible */
+.scrollbar-x {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-solid) rgba(9, 9, 11, 0.35);
+}
+
+.scrollbar-x::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scrollbar-x::-webkit-scrollbar-track {
+  background: rgba(9, 9, 11, 0.35);
+  border-radius: var(--radius-pill);
+  margin: 0 2rem;
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 10px rgba(212, 160, 84, 0.2);
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, var(--accent-hover), var(--accent-tertiary));
+}
+
+:root[data-theme="light"] .scrollbar-x {
+  scrollbar-color: var(--scrollbar-thumb-solid) rgba(26, 23, 20, 0.06);
+}
+
+:root[data-theme="light"] .scrollbar-x::-webkit-scrollbar-track {
+  background: rgba(26, 23, 20, 0.06);
+}

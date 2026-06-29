@@ -21,7 +21,7 @@
   font-weight: 700;
   color: #fff;
   margin: 0;
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -31,38 +31,6 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
-}
-
-.favorites-action-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.favorites-action-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.favorites-action-btn.delete-btn {
-  background: rgba(255, 0, 0, 0.2);
-  border-color: rgba(255, 0, 0, 0.4);
-  color: #ff6b6b;
-}
-
-.favorites-action-btn.delete-btn:hover {
-  background: rgba(255, 0, 0, 0.3);
-  border-color: rgba(255, 0, 0, 0.5);
 }
 
 .favorites-action-btn:disabled {
@@ -98,7 +66,7 @@
 
 .favorites-tab.active {
   color: #fff;
-  border-bottom-color: #00e0ff;
+  border-bottom-color: var(--accent-primary);
 }
 
 .favorites-controls {
@@ -139,7 +107,7 @@
 
 .sort-select:focus {
   outline: none;
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .favorites-count {
@@ -168,7 +136,7 @@
 }
 
 .favorites-card-wrapper.selected {
-  outline: 3px solid #00e0ff;
+  outline: 3px solid var(--accent-primary);
   outline-offset: 4px;
   border-radius: 12px;
 }
@@ -192,7 +160,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #00e0ff;
+  accent-color: var(--accent-primary);
 }
 
 .favorites-empty-state {

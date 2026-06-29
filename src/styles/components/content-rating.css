@@ -1,0 +1,49 @@
+.content-rating {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.content-rating.compact {
+  font-size: 0.58rem;
+  min-width: 1.6rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.content-rating--kids {
+  border-color: var(--kids-accent);
+  color: var(--kids-accent);
+}
+
+.content-rating--adult {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.content-rating--high {
+  border-color: #ffd166;
+  color: #ffd166;
+}
+
+.movie-card > .content-rating {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+}
+
+.movie-card-hit-area .content-rating {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+}

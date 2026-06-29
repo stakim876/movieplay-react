@@ -8,7 +8,7 @@
   font-weight: 700;
   color: #fff;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -32,8 +32,8 @@
 }
 
 .stat-card:hover {
-  border-color: rgba(0, 224, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 224, 255, 0.2);
+  border-color: rgba(212, 160, 84, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 160, 84, 0.2);
   transform: translateY(-2px);
 }
 
@@ -43,7 +43,7 @@
 
 .stat-icon {
   font-size: 2rem;
-  color: #00e0ff;
+  color: var(--accent-primary);
   flex-shrink: 0;
 }
 

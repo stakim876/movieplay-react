@@ -24,6 +24,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
   showToast: (message, type = "info", duration = 3000) => {
     const id = Date.now() + Math.random();
     set((state) => ({
+      // 배열에 push 하면 같은 참조라 화면이 안 바뀔 수 있음 → 새 배열 [...] 로 복사
       toasts: [...state.toasts, { id, message, type, duration }],
     }));
 

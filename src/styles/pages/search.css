@@ -1,8 +1,30 @@
 .search-page {
   min-height: 100vh;
   padding: 100px 2rem 4rem;
-  background: #0b1622;
-  color: #fff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.search-discovery-intro {
+  max-width: 800px;
+  margin: 0 auto 1.25rem;
+  text-align: center;
+}
+
+.search-discovery-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+}
+
+.search-discovery-text {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--text-primary);
 }
 
 .search-header {
@@ -36,7 +58,7 @@
   outline: none;
   background: rgba(0, 0, 0, 0.9);
   border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 0 2px rgba(0, 224, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(212, 160, 84, 0.3);
 }
 
 .search-input::placeholder {
@@ -67,6 +89,17 @@
   max-height: 400px;
   overflow-y: auto;
   animation: fadeInDown 0.2s ease-out;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-solid) transparent;
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 5px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-solid);
+  border-radius: var(--radius-pill);
 }
 
 @keyframes fadeInDown {
@@ -150,7 +183,7 @@
 }
 
 .suggestion-type {
-  color: #00e0ff;
+  color: var(--accent-primary);
 }
 
 .search-tabs {
@@ -183,7 +216,7 @@
 
 .search-tab.active {
   color: #fff;
-  border-bottom-color: #00e0ff;
+  border-bottom-color: var(--accent-primary);
 }
 
 .search-results-header {
@@ -227,7 +260,7 @@
 
 .filter-select:focus {
   outline: none;
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .filter-reset-btn {
@@ -296,9 +329,9 @@
 }
 
 .popular-tag:hover {
-  background: rgba(0, 224, 255, 0.2);
-  border-color: #00e0ff;
-  color: #00e0ff;
+  background: rgba(212, 160, 84, 0.2);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
   transform: translateY(-2px);
 }
 
@@ -393,8 +426,30 @@
 
 .person-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(0, 224, 255, 0.35);
+  border-color: rgba(212, 160, 84, 0.35);
   background: rgba(0, 0, 0, 0.75);
+}
+
+.person-card--skeleton {
+  min-height: 78px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: search-skeleton-shimmer 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes search-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .person-photo {

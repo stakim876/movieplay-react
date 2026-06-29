@@ -11,6 +11,23 @@
   justify-content: center;
 }
 
+.video-player--youtube {
+  border: 0;
+}
+
+.video-player-container--trailer .video-player-controls--trailer {
+  opacity: 1;
+  pointer-events: auto;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, transparent 35%);
+}
+
+.video-player-container--trailer .video-player--youtube {
+  width: min(100%, 1280px);
+  height: min(72vh, calc(100% - 4rem));
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
 .video-player {
   width: 100%;
   height: 100%;
@@ -32,7 +49,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #00e0ff;
+  border-top: 4px solid var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -165,7 +182,7 @@
 
 .player-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   border-radius: 3px;
   transition: width 0.1s linear;
 }
@@ -176,7 +193,7 @@
   transform: translate(-50%, -50%);
   width: 14px;
   height: 14px;
-  background: #00e0ff;
+  background: var(--accent-primary);
   border: 2px solid #fff;
   border-radius: 50%;
   opacity: 0;
@@ -244,7 +261,7 @@
   appearance: none;
   width: 12px;
   height: 12px;
-  background: #00e0ff;
+  background: var(--accent-primary);
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -257,7 +274,7 @@
 .player-volume-slider::-moz-range-thumb {
   width: 12px;
   height: 12px;
-  background: #00e0ff;
+  background: var(--accent-primary);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -314,7 +331,7 @@
 }
 
 .nextup-title {
-  color: #aefcff;
+  color: var(--text-accent);
   font-weight: 800;
   font-size: 1.05rem;
   margin-bottom: 0.25rem;
@@ -342,7 +359,7 @@
 }
 
 .nextup-btn.primary {
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #001a1a;
   border: none;
 }
@@ -371,7 +388,7 @@
 
 .player-help-title {
   font-weight: 900;
-  color: #aefcff;
+  color: var(--text-accent);
   margin-bottom: 0.75rem;
 }
 
@@ -388,9 +405,9 @@
 
 .player-help-close {
   margin-top: 0.9rem;
-  border: 1px solid rgba(0, 224, 255, 0.25);
-  background: rgba(0, 224, 255, 0.08);
-  color: #aefcff;
+  border: 1px solid rgba(212, 160, 84, 0.25);
+  background: rgba(212, 160, 84, 0.08);
+  color: var(--text-accent);
   padding: 0.5rem 0.9rem;
   border-radius: 10px;
   cursor: pointer;
@@ -422,13 +439,13 @@
 
 .settings-option:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .settings-option.active {
-  background: rgba(0, 224, 255, 0.2);
-  border-color: #00e0ff;
-  color: #00e0ff;
+  background: rgba(212, 160, 84, 0.2);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .video-player-error {

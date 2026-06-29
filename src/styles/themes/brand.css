@@ -1,0 +1,109 @@
+/* Typography & section polish — Cinema Noir token 기반 */
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.home-page,
+.main-content {
+  background: var(--bg-primary);
+}
+
+.featured-hero {
+  position: relative;
+}
+
+.featured-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--bg-primary) 0%,
+    transparent 42%,
+    transparent 68%,
+    rgba(9, 9, 11, 0.35) 100%
+  );
+}
+
+.home-greeting-title,
+.category-title,
+.top10-title,
+.personalized-section .section-title,
+.page-title,
+.category-list-title {
+  color: var(--text-primary);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-shadow: none;
+}
+
+.home-greeting-title .accent,
+.logo-text .accent {
+  color: var(--accent-primary);
+}
+
+.home-kids-notice {
+  color: var(--kids-accent);
+}
+
+.personalized-badge {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+  color: #1a1408;
+  border-radius: var(--radius-pill);
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.header.scrolled {
+  background: var(--bg-overlay);
+  border-bottom-color: var(--border-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.logo-text {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.logo-text span,
+.logo .brand-mark {
+  color: var(--accent-primary);
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--accent-primary);
+}
+
+.movie-card-match {
+  color: var(--success);
+}
+
+.playback-scope-badge {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+  color: #1a1408;
+}
+
+.portfolio-scope-note strong {
+  color: var(--accent-tertiary);
+}
+
+.section-divider {
+  height: 1px;
+  margin: 2rem 0;
+  background: linear-gradient(90deg, transparent, var(--border-primary), transparent);
+  border: none;
+}

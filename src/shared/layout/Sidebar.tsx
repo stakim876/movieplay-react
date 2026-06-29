@@ -1,0 +1,32 @@
+import { Link } from "react-router-dom";
+import { FaHome, FaSearch, FaHeart, FaUser, FaCreditCard, FaThLarge } from "react-icons/fa";
+import { ROUTES } from "@/core/config/routes";
+import "@/styles/components/components.css";
+
+export default function Sidebar({ isOpen, onClose }) {
+  return (
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+      <nav className="sidebar-nav">
+        <Link to="/home" className="sidebar-item" onClick={onClose}>
+          <FaHome /> <span>홈</span>
+        </Link>
+        <Link to={ROUTES.browse} className="sidebar-item" onClick={onClose}>
+          <FaThLarge /> <span>둘러보기</span>
+        </Link>
+        <Link to={ROUTES.search} className="sidebar-item" onClick={onClose}>
+          <FaSearch /> <span>검색</span>
+        </Link>
+        <Link to="/favorites" className="sidebar-item" onClick={onClose}>
+          <FaHeart /> <span>즐겨찾기</span>
+        </Link>
+        <Link to="/subscription" className="sidebar-item" onClick={onClose}>
+          <FaCreditCard /> <span>구독</span>
+        </Link>
+        <Link to="/profile" className="sidebar-item" onClick={onClose}>
+          <FaUser /> <span>프로필</span>
+        </Link>
+      </nav>
+    </aside>
+  );
+}
+

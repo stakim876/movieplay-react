@@ -1,0 +1,128 @@
+/**
+ * MoviePlay design tokens — Cinema Noir
+ * Netflix(레드) · Disney+(시안) 클론이 아닌, 웜 차콜 + 앰버 골드 아이덴티티
+ */
+:root,
+:root[data-theme="dark"] {
+  --bg-primary: #09090b;
+  --bg-secondary: #111114;
+  --bg-tertiary: #1a1a1f;
+  --bg-card: #16161c;
+  --bg-overlay: rgba(9, 9, 11, 0.94);
+  --bg-input: rgba(22, 22, 28, 0.96);
+  --bg-hover: rgba(212, 160, 84, 0.09);
+  --bg-active: rgba(212, 160, 84, 0.16);
+
+  --text-primary: #f4f1ec;
+  --text-secondary: #d4cfc6;
+  --text-tertiary: #9e9890;
+  --text-muted: rgba(244, 241, 236, 0.52);
+  --text-accent: #e8c47a;
+
+  --accent-primary: #d4a054;
+  --accent-secondary: #b87d4b;
+  --accent-tertiary: #e8c47a;
+  --accent-hover: #e8b45c;
+  --accent-muted: rgba(212, 160, 84, 0.35);
+
+  --success: #5cb87a;
+  --kids-accent: #9cb89a;
+
+  --border-primary: rgba(212, 160, 84, 0.22);
+  --border-secondary: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(212, 160, 84, 0.42);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 4px 20px rgba(212, 160, 84, 0.14);
+
+  --scrollbar-track: transparent;
+  --scrollbar-thumb-solid: rgba(212, 160, 84, 0.38);
+  --scrollbar-thumb-hover: rgba(232, 196, 122, 0.62);
+  --scrollbar-thumb: var(--scrollbar-thumb-solid);
+
+  --font-sans: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --header-height: 60px;
+  --transition-fast: 0.18s ease;
+  --transition-base: 0.28s ease;
+
+  /* Streaming button system */
+  --btn-radius: 4px;
+  --btn-height-sm: 34px;
+  --btn-height-md: 42px;
+  --btn-height-lg: 48px;
+  --btn-padding-x: 1.25rem;
+  --btn-padding-x-lg: 1.75rem;
+  --btn-font-size: 1rem;
+  --btn-font-weight: 600;
+  --btn-icon-size: 40px;
+
+  --btn-primary-bg: #ffffff;
+  --btn-primary-fg: #141414;
+  --btn-primary-hover: rgba(255, 255, 255, 0.82);
+
+  --btn-secondary-bg: rgba(109, 109, 110, 0.55);
+  --btn-secondary-fg: #ffffff;
+  --btn-secondary-hover: rgba(109, 109, 110, 0.35);
+
+  --btn-ghost-border: rgba(255, 255, 255, 0.45);
+  --btn-ghost-fg: #ffffff;
+  --btn-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+
+  --btn-focus-ring: 0 0 0 2px var(--accent-muted);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #ece8e1;
+  --bg-secondary: #f5f2ed;
+  --bg-tertiary: #e0dbd3;
+  --bg-card: #ffffff;
+  --bg-overlay: rgba(255, 255, 255, 0.94);
+  --bg-input: #faf8f5;
+  --bg-hover: rgba(184, 125, 75, 0.1);
+  --bg-active: rgba(184, 125, 75, 0.16);
+
+  --text-primary: #1a1714;
+  --text-secondary: #3d3832;
+  --text-tertiary: #6b645c;
+  --text-muted: rgba(26, 23, 20, 0.55);
+  --text-accent: #9a6b38;
+
+  --accent-primary: #b8873d;
+  --accent-secondary: #9a6b38;
+  --accent-tertiary: #d4a054;
+  --accent-hover: #c99744;
+  --accent-muted: rgba(184, 125, 75, 0.3);
+
+  --border-primary: rgba(26, 23, 20, 0.12);
+  --border-secondary: rgba(26, 23, 20, 0.08);
+  --border-hover: rgba(184, 125, 75, 0.45);
+
+  --shadow-sm: 0 2px 10px rgba(26, 23, 20, 0.06);
+  --shadow-md: 0 8px 22px rgba(26, 23, 20, 0.08);
+  --shadow-lg: 0 14px 34px rgba(26, 23, 20, 0.1);
+  --shadow-glow: 0 4px 16px rgba(184, 125, 75, 0.12);
+
+  --scrollbar-track: transparent;
+  --scrollbar-thumb-solid: rgba(154, 107, 56, 0.42);
+  --scrollbar-thumb-hover: rgba(184, 125, 75, 0.68);
+  --scrollbar-thumb: var(--scrollbar-thumb-solid);
+
+  --btn-primary-bg: #141414;
+  --btn-primary-fg: #ffffff;
+  --btn-primary-hover: rgba(26, 23, 20, 0.88);
+
+  --btn-secondary-bg: rgba(26, 23, 20, 0.08);
+  --btn-secondary-fg: var(--text-primary);
+  --btn-secondary-hover: rgba(26, 23, 20, 0.14);
+
+  --btn-ghost-border: rgba(26, 23, 20, 0.28);
+  --btn-ghost-fg: var(--text-primary);
+  --btn-ghost-hover-bg: rgba(26, 23, 20, 0.06);
+}

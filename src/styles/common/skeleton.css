@@ -10,9 +10,9 @@
 .skeleton-base {
   background: linear-gradient(
     90deg,
-    #1a1a1a 0px,
-    #2a2a2a 40px,
-    #1a1a1a 80px
+    var(--bg-tertiary, #1a1a1a) 0px,
+    var(--bg-card, #2a2a2a) 40px,
+    var(--bg-tertiary, #1a1a1a) 80px
   );
   background-size: 200px 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
@@ -25,7 +25,7 @@
   aspect-ratio: 2 / 3;
   border-radius: 12px;
   overflow: hidden;
-  background: #0e1a24;
+  background: var(--bg-secondary, var(--bg-card));
 }
 
 .skeleton-poster {

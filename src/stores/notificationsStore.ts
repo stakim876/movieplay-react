@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { getActiveProfileKey } from "@/utils/activeProfile";
-import { fetchMovieDetail } from "@/services/tmdb";
+import { db } from "@/core/firebase";
+import { getActiveProfileKey } from "@/shared/lib/activeProfile";
+import { fetchMovieDetail } from "@/core/api/tmdb";
 import { useAuthStore } from "@/stores/authStore";
 import { useFavoritesStore } from "@/stores/favoritesStore";
 import { useToastStore } from "@/stores/toastStore";

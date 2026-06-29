@@ -5,10 +5,10 @@
   box-sizing: border-box;
 
   background:
-    radial-gradient(1100px 520px at 20% 10%, rgba(56, 189, 248, 0.18), transparent 60%),
-    radial-gradient(900px 480px at 80% 30%, rgba(45, 212, 191, 0.12), transparent 55%),
-    linear-gradient(180deg, #070a12 0%, #050711 100%);
-  color: rgba(255,255,255,0.92);
+    radial-gradient(1100px 520px at 20% 10%, rgba(212, 160, 84, 0.12), transparent 60%),
+    radial-gradient(900px 480px at 80% 30%, rgba(184, 125, 75, 0.08), transparent 55%),
+    linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  color: var(--text-primary);
 }
 
 .subscription-container {
@@ -63,7 +63,7 @@
 }
 
 .billing-toggle span.active {
-  color: #7cf7e6;
+  color: var(--accent-tertiary);
 }
 
 .toggle-switch {
@@ -101,9 +101,9 @@
   margin-left: 8px;
   padding: 3px 10px;
   border-radius: 999px;
-  background: rgba(124, 247, 230, 0.14);
-  border: 1px solid rgba(124, 247, 230, 0.22);
-  color: #7cf7e6;
+  background: rgba(212, 160, 84, 0.14);
+  border: 1px solid rgba(212, 160, 84, 0.22);
+  color: var(--accent-tertiary);
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -134,12 +134,12 @@
 
 .plan-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(124, 247, 230, 0.26);
+  border-color: rgba(212, 160, 84, 0.26);
   box-shadow: 0 22px 55px rgba(0,0,0,0.45);
 }
 
 .plan-card.popular {
-  border-color: rgba(124, 247, 230, 0.42);
+  border-color: rgba(212, 160, 84, 0.42);
   box-shadow: 0 26px 70px rgba(0,0,0,0.50);
 }
 
@@ -152,9 +152,9 @@
   font-size: 0.8rem;
   font-weight: 900;
 
-  background: rgba(124, 247, 230, 0.16);
-  border: 1px solid rgba(124, 247, 230, 0.25);
-  color: #7cf7e6;
+  background: rgba(212, 160, 84, 0.16);
+  border: 1px solid rgba(212, 160, 84, 0.25);
+  color: var(--accent-tertiary);
 }
 
 .plan-name {
@@ -174,7 +174,7 @@
 .price-amount {
   font-size: 2.1rem;
   font-weight: 900;
-  color: #7cf7e6;
+  color: var(--accent-tertiary);
 }
 
 .price-period {
@@ -184,7 +184,7 @@
 
 .plan-savings {
   margin: 10px 0 0;
-  color: rgba(124, 247, 230, 0.85);
+  color: rgba(212, 160, 84, 0.85);
   font-weight: 700;
 }
 
@@ -209,42 +209,8 @@
 }
 
 .feature-icon {
-  color: #7cf7e6;
+  color: var(--accent-tertiary);
   font-weight: 900;
-}
-
-.btn-plan {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  cursor: pointer;
-  font-weight: 900;
-  font-size: 1rem;
-  transition: transform 0.15s, background 0.15s, border-color 0.15s;
-}
-
-.btn-plan.subscribe {
-  background: rgba(124, 247, 230, 0.14);
-  color: #eafffb;
-  border-color: rgba(124, 247, 230, 0.22);
-}
-
-.btn-plan.subscribe:hover {
-  transform: translateY(-2px);
-  background: rgba(124, 247, 230, 0.18);
-  border-color: rgba(124, 247, 230, 0.32);
-}
-
-.btn-plan.upgrade {
-  background: linear-gradient(90deg, rgba(124, 247, 230, 0.22), rgba(56, 189, 248, 0.22));
-  color: #eafffb;
-  border-color: rgba(124, 247, 230, 0.28);
-}
-
-.btn-plan.upgrade:hover {
-  transform: translateY(-2px);
-  border-color: rgba(124, 247, 230, 0.40);
 }
 
 .subscription-trust {
@@ -374,12 +340,12 @@
 .payment-history-amount {
   margin-left: auto;
   font-weight: 700;
-  color: #7cf7e6;
+  color: var(--accent-tertiary);
 }
 
 .payment-history-receipt {
   font-size: 0.85rem;
-  color: #7cf7e6;
+  color: var(--accent-tertiary);
   text-decoration: none;
 }
 

@@ -17,12 +17,15 @@ function loadTheme(): ThemeMode {
 }
 
 function getEffectiveTheme(theme: ThemeMode) {
+  // "system"이면 OS 다크모드 설정을 따름
   if (theme === "system") {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
   return theme;
 }
 
+// html 태그에 data-theme="dark" 속성을 넣어 CSS에서 테마 전환
+// → body에 class 토글하는 것보다 스타일 파일과 역할이 분리됨
 function applyTheme(effectiveTheme: string) {
   document.documentElement.setAttribute("data-theme", effectiveTheme);
 }
@@ -79,6 +82,7 @@ export function initThemeStore() {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const handleChange = () => {
     const { theme } = useThemeStore.getState();
+    // 사용자가 light/dark를 직접 고른 경우엔 OS 설정 변경 무시
     if (theme !== "system") return;
     const effectiveTheme = getEffectiveTheme("system");
     applyTheme(effectiveTheme);

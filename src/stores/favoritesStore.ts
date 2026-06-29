@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { db } from "@/services/firebase";
+import { db } from "@/core/firebase";
 import { collection, getDocs, setDoc, deleteDoc, doc } from "firebase/firestore";
 import { useAuthStore } from "@/stores/authStore";
 import { useToastStore } from "@/stores/toastStore";
@@ -55,6 +55,8 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
   },
 
   toggleFavorite: async (movie) => {
+    // [면접] 훅 밖(스토어 액션)에서는 useAuth() 못 씀 → getState()로 최신 user 읽기
+    // → React 훅 규칙: useXxx는 컴포넌트/커스텀훅 안에서만 호출 가능
     const user = useAuthStore.getState().user;
     const { error: showError, success: showSuccess } = useToastStore.getState();
 
@@ -93,6 +95,8 @@ export function initFavoritesStore() {
   const user = useAuthStore.getState().user;
   useFavoritesStore.getState().fetchFavorites(user);
 
+  // [면접] auth 스토어를 구독해서, 로그인/로그아웃/계정 바뀔 때 찜 목록 자동 새로고침
+  // → 컴포넌트 리렌더 없이 스토어끼리 동기화하는 Zustand 패턴
   favoritesUnsubscribe = useAuthStore.subscribe((state, prev) => {
     if (state.user?.uid !== prev.user?.uid) {
       useFavoritesStore.getState().fetchFavorites(state.user);

@@ -6,7 +6,7 @@ import {
   getGenres,
   getNavigation,
   getHomeGenres,
-} from "@/services/firestore/config";
+} from "@/core/api/firestore/config";
 
 interface ConfigState {
   profiles: any[];

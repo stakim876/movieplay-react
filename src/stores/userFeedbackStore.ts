@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { getActiveProfileKey } from "@/utils/activeProfile";
+import { db } from "@/core/firebase";
+import { getActiveProfileKey } from "@/shared/lib/activeProfile";
 import { useAuthStore } from "@/stores/authStore";
 
 function normalizeId(id: unknown) {

@@ -2,12 +2,81 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/assets/logo-mp.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/movieplay-logo.svg?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MoviePlay | 감성 무비</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="description" content="프로필·키즈 필터·시청기록 기반 추천이 있는 OTT 스타일 React 포트폴리오" />
+    <meta property="og:title" content="MoviePlay | React OTT Portfolio" />
+    <meta property="og:description" content="Feature-Sliced Architecture · TypeScript · Firebase · TMDB" />
+    <meta property="og:type" content="website" />
+    <title>MoviePlay | OTT 클라이언트 포트폴리오</title>
+    <style>
+      html, body, #root {
+        margin: 0;
+        min-height: 100%;
+        background: #09090b;
+        color: #f4f1ec;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+      #mp-boot {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        background: #09090b;
+      }
+      #mp-boot img {
+        filter: drop-shadow(0 4px 16px rgba(212, 160, 84, 0.25));
+      }
+      #mp-boot-spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(212, 160, 84, 0.25);
+        border-top-color: #d4a054;
+        border-radius: 50%;
+        animation: mp-spin 0.9s linear infinite;
+      }
+      #mp-boot p {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      @keyframes mp-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script>
+      (function () {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.unregister(); });
+          });
+        }
+        if (window.caches) {
+          caches.keys().then(function (keys) {
+            keys.forEach(function (k) { caches.delete(k); });
+          });
+        }
+        try {
+          localStorage.removeItem("vite:client:connect");
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root">
+      <div id="mp-boot" aria-busy="true" aria-label="MoviePlay 로딩">
+        <img src="/assets/movieplay-logo.svg?v=2" alt="MoviePlay" width="80" height="80" />
+        <div id="mp-boot-spinner"></div>
+        <p>MoviePlay</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx?v=movieplay2"></script>
   </body>
 </html>

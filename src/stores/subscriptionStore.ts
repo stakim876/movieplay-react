@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { useMemo } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { getPlanFeatures } from "@/constants/subscriptionPlans";
+import { db } from "@/core/firebase";
+import { getPlanFeatures } from "@/shared/constants/subscriptionPlans";
 import { useAuthStore } from "@/stores/authStore";
 
 interface SubscriptionState {

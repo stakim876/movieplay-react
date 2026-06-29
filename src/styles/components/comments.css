@@ -13,7 +13,7 @@
   font-weight: 700;
   color: #fff;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -78,7 +78,7 @@
 
 .rating-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   transition: width 0.3s ease;
 }
 
@@ -149,7 +149,7 @@
 
 .comment-input:focus {
   outline: none;
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .comment-input::placeholder {
@@ -171,7 +171,7 @@
 
 .comment-submit-btn {
   padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #000;
   border: none;
   border-radius: 8px;
@@ -183,7 +183,7 @@
 
 .comment-submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 224, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(212, 160, 84, 0.4);
 }
 
 .comments-controls {
@@ -225,7 +225,7 @@
 }
 
 .sort-btn.active {
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #000;
   border-color: transparent;
 }
@@ -258,8 +258,8 @@
 }
 
 .comment-item:hover {
-  border-color: rgba(0, 224, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 224, 255, 0.1);
+  border-color: rgba(212, 160, 84, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 160, 84, 0.1);
 }
 
 .comment-item.spoiler {
@@ -295,7 +295,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #000;
   display: flex;
   align-items: center;
@@ -369,14 +369,14 @@
 }
 
 .like-btn.liked {
-  background: rgba(0, 224, 255, 0.2);
-  border-color: #00e0ff;
-  color: #00e0ff;
+  background: rgba(212, 160, 84, 0.2);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .reply-btn:hover {
-  background: rgba(0, 224, 255, 0.1);
-  color: #00e0ff;
+  background: rgba(212, 160, 84, 0.1);
+  color: var(--accent-primary);
 }
 
 .edit-btn:hover {
@@ -413,7 +413,7 @@
 
 .comment-edit-input:focus {
   outline: none;
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .comment-edit-actions {
@@ -435,7 +435,7 @@
 }
 
 .edit-save-btn {
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #000;
 }
 
@@ -458,7 +458,7 @@
   padding: 1rem;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  border-left: 3px solid #00e0ff;
+  border-left: 3px solid var(--accent-primary);
 }
 
 .reply-input {
@@ -476,7 +476,7 @@
 
 .reply-input:focus {
   outline: none;
-  border-color: #00e0ff;
+  border-color: var(--accent-primary);
 }
 
 .reply-actions {
@@ -495,7 +495,7 @@
 }
 
 .reply-submit-btn {
-  background: linear-gradient(135deg, #00e0ff 0%, #8fffe3 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
   color: #000;
 }
 
@@ -516,7 +516,7 @@
 .replies-list {
   margin-top: 1rem;
   padding-left: 1rem;
-  border-left: 2px solid rgba(0, 224, 255, 0.3);
+  border-left: 2px solid rgba(212, 160, 84, 0.3);
 }
 
 .reply-item {

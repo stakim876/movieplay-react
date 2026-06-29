@@ -11,6 +11,16 @@
   color: #fff;
 }
 
+.page-loader--fullscreen {
+  min-height: 100vh;
+  background: var(--bg-secondary);
+}
+
+.page-loader-logo {
+  display: block;
+  margin: 0 auto 1.25rem;
+}
+
 .page-loader-content {
   text-align: center;
 }
@@ -18,8 +28,8 @@
 .page-loader-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(0, 224, 255, 0.3);
-  border-top: 4px solid #00e0ff;
+  border: 4px solid rgba(212, 160, 84, 0.3);
+  border-top: 4px solid var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -28,4 +38,21 @@
 .page-loader-text {
   color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 10001;
+  padding: 0.6rem 1rem;
+  background: var(--accent-primary);
+  color: var(--bg-secondary);
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
 }
