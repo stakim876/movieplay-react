@@ -14,6 +14,7 @@ import WatchAgain from "@/features/browse/components/home/WatchAgain";
 import PersonalizedSection from "@/features/browse/components/home/PersonalizedSection";
 import MyListRow from "@/features/browse/components/home/MyListRow";
 import ProjectCharter from "@/shared/ui/ProjectCharter";
+import { PORTFOLIO_SCOPE } from "@/shared/constants/portfolioScope";
 
 export default function HomePage() {
   const { navigation, homeGenres, loading } = useConfig();
@@ -39,6 +40,7 @@ export default function HomePage() {
         <ProjectCharter />
         <div className="home-greeting">
           <h1 className="home-greeting-title">{profileName}님, 오늘 뭐 볼까요?</h1>
+          <p className="home-greeting-sub">{PORTFOLIO_SCOPE.tagline}</p>
           {kidsMode && (
             <p className="home-kids-notice">
               키즈 프로필 — 안전한 콘텐츠만 보여드려요

@@ -57,6 +57,14 @@
   margin: 0;
 }
 
+.home-greeting-sub {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  max-width: 42rem;
+}
+
 .home-kids-notice {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
@@ -165,15 +173,15 @@
   max-width: 100%;
 }
 
-.hs--netflix .hs-scroll {
+.hs--carousel .hs-scroll {
   scrollbar-width: none;
 }
 
-.hs--netflix .hs-scroll::-webkit-scrollbar {
+.hs--carousel .hs-scroll::-webkit-scrollbar {
   display: none;
 }
 
-.hs--netflix .hs-btn {
+.hs--carousel .hs-btn {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-50%) scale(0.96);
@@ -181,23 +189,23 @@
     border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.hs--netflix:hover .hs-btn,
-.hs--netflix:focus-within .hs-btn {
+.hs--carousel:hover .hs-btn,
+.hs--carousel:focus-within .hs-btn {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(-50%) scale(1);
 }
 
-.hs--netflix .hs-btn.disabled {
+.hs--carousel .hs-btn.disabled {
   opacity: 0.25;
 }
 
-.hs--netflix .hs-edge {
+.hs--carousel .hs-edge {
   opacity: 0;
 }
 
-.hs--netflix:hover .hs-edge.show,
-.hs--netflix:focus-within .hs-edge.show {
+.hs--carousel:hover .hs-edge.show,
+.hs--carousel:focus-within .hs-edge.show {
   opacity: 1;
 }
 

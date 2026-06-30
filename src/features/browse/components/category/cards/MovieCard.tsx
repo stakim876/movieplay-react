@@ -45,18 +45,6 @@ function getReleaseYear(movie: {
 
 
 
-function getMatchPercent(voteAverage?: number) {
-
-  const score = Number(voteAverage || 0);
-
-  if (score <= 0) return null;
-
-  return Math.min(99, Math.round(score * 10));
-
-}
-
-
-
 export default function MovieCard({
 
   movie,
@@ -157,8 +145,6 @@ export default function MovieCard({
 
   const year = getReleaseYear(movie);
 
-  const matchPercent = getMatchPercent(movie.vote_average);
-
   const showOverlay = isHovered || isExpanded;
 
 
@@ -255,7 +241,9 @@ export default function MovieCard({
 
           {year && <span className="movie-card-year">{year}</span>}
 
-          {matchPercent && <span className="movie-card-match">{matchPercent}% 일치</span>}
+          {movie.vote_average > 0 && (
+            <span className="movie-card-match">★ {Number(movie.vote_average).toFixed(1)}</span>
+          )}
 
         </div>
 

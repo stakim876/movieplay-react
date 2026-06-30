@@ -11,7 +11,7 @@
 |------|---------------------|
 | 가로 스크롤 행 + 히어로 배너 | OTT 업계 **공통 IA** (Netflix가 독점한 패턴 아님) |
 | 흰색 재생 버튼 | 스트리밍 앱 **접근성·대비 표준** |
-| Top N 랭킹 | Netflix 브랜딩과 강하게 연상됨 |
+| Top N 숫자 랭킹 | Netflix 브랜딩과 강하게 연상됨 |
 | "재생" 문구 | 본편 스트리밍 서비스처럼 오해 |
 | README에 Netflix 언급 | 오히려 "클론 부정"이 클론 연상을 강화 |
 
@@ -75,12 +75,12 @@
 | 요소 | 대응 |
 |------|------|
 | "재생" 버튼 | ✅ **"예고편 보기"** (browse CTA) |
-| "오늘의 TOP 10" | ✅ **"지금 뜨는 작품"** |
-| Netflix/README 언급 | ✅ README·POSITIONING 분리 |
+| "오늘의 TOP 10" / 숫자 랭킹 | ✅ **"지금 뜨는 작품"** · 순위 숫자 제거 |
+| "% 일치" (Match) | ✅ **★ 평점** 표시 |
+| Netflix/README 언급 | ✅ 코드·주석 정리 · README는 포지셔닝 중심 |
 | 구독 "14일 무료 체험" 카피 | ✅ **결제 UI 데모** 포지셔닝 |
 | 검색 "인기 검색어" | ✅ **Discover** + 추천 키워드 |
-| 레거시 `src/pages` 중복 | ✅ `cleanup-legacy.mjs` 정리 |
-| 차별 기능이 눈에 안 띔 | ✅ 홈 ProjectCharter 배너 |
+| 차별 기능이 눈에 안 띔 | ✅ 홈 ProjectCharter (배포 포함) + tagline |
 | Live Demo 없음 | ⚠️ [`DEPLOY.md`](./DEPLOY.md) 따라 Vercel 배포 |
 
 ---

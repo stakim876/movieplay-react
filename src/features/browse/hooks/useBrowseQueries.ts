@@ -98,7 +98,7 @@ export function usePersonQuery(id: string | undefined) {
 
 export function useTop10Query() {
   return useQuery({
-    queryKey: queryKeys.catalog.row({ top10: true, endpoint: "/movie/popular?language=ko-KR&page=1" }),
+    queryKey: queryKeys.catalog.row({ trending: true, endpoint: "/movie/popular?language=ko-KR&page=1" }),
     queryFn: () => fetchCatalogPage({ endpoint: "/movie/popular?language=ko-KR&page=1" }, 1),
     select: (data) => (data.results || []).filter((item) => !item.adult).slice(0, 10),
     staleTime: 1000 * 60 * 15,

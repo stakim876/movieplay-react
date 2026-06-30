@@ -21,7 +21,22 @@ export const PORTFOLIO_SCOPE = {
     playback: "공식 YouTube 예고편 우선 · 없으면 저작권-free 샘플 영상",
     excluded: "본편 라이선스 스트리밍, DRM, CDN, 자체 인코딩",
   },
-  /** 채용에서 검증하려는 엔지니어링 역량 */
+  /** 채용 리뷰어가 Live Demo에서 바로 볼 차별 포인트 */
+  highlights: [
+    "멀티 프로필",
+    "키즈 필터",
+    "추천 사유",
+    "예고편 재생",
+  ] as const,
+  /** 신입 포트폴리오에서 기업이 우선 확인하는 역량 (README·홈 배너와 동기화) */
+  hiringFocus: [
+    "문제 정의",
+    "범위 판단",
+    "상태 설계",
+    "코드 구조",
+    "테스트·CI",
+  ] as const,
+  /** 채용에서 검증하려는 엔지니어링 역량 (코드·문서용) */
   validates: [
     "도메인 경계 (browse / playback / engagement 분리)",
     "서버·클라이언트 상태 분리 (React Query + Zustand)",

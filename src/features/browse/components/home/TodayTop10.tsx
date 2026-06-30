@@ -18,13 +18,12 @@ export default function TodayTop10() {
       >
         {isLoading
           ? [...Array(5)].map((_, i) => <MovieCardSkeleton key={i} />)
-          : movies.map((m, i) => (
+          : movies.map((m) => (
               <div
                 key={m.id}
                 className="top10-card"
                 onClick={() => navigate(`/movie/${m.id}`)}
               >
-                <div className="rank">{i + 1}</div>
                 <img
                   src={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
                   alt={m.title || m.name}

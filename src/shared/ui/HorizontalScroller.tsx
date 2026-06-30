@@ -27,7 +27,7 @@ const HorizontalScroller = forwardRef<HTMLDivElement, HorizontalScrollerProps>(f
     step = "page",
     showControls = true,
     showIndicator = true,
-    variant = "netflix",
+    variant = "carousel",
     onScroll,
   },
   forwardedRef
